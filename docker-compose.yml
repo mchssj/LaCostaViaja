@@ -1,0 +1,49 @@
+name: lacosta
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: lacosta
+      POSTGRES_USER: lacosta
+      POSTGRES_PASSWORD: lacosta_dev
+      TZ: America/Argentina/Buenos_Aires
+      PGTZ: America/Argentina/Buenos_Aires
+    ports:
+      - "55432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lacosta -d lacosta"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  # Fase 2: posiciones GPS en vivo, colas de despacho y locks atómicos.
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "56379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  # Ruteo vial real. Requiere preprocesar el extracto OSM (ver infra/osrm/README.md).
+  # Se levanta con: docker compose --profile routing up -d osrm
+  osrm:
+    profiles: ["routing"]
+    image: ghcr.io/project-osrm/osrm-backend:v5.27.1
+    command: ["osrm-routed", "--algorithm", "mld", "/data/la-costa.osrm"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./infra/osrm/data:/data
+
+volumes:
+  pgdata: {}
+  redisdata: {}

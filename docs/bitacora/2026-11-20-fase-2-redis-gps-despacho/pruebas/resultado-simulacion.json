@@ -1,0 +1,43 @@
+{
+  "fecha": "2026-11-20T14:18:25.139Z",
+  "parametros": {
+    "drivers": 300,
+    "trips": 200,
+    "burstMs": 40000,
+    "pingEveryMs": 2000,
+    "offerTimeoutMs": 3000,
+    "maxSearchMs": 60000,
+    "acceptProbability": 0.85,
+    "rejectProbability": 0.1,
+    "settleTimeoutMs": 150000
+  },
+  "viajes": {
+    "COMPLETED": 200
+  },
+  "interurbanos": 62,
+  "ofertas": {
+    "ACCEPTED": 200,
+    "REJECTED": 29,
+    "EXPIRED": 3
+  },
+  "ofertasPorViajeAsignado": 1.16,
+  "esperaHastaAsignacionSegundos": {
+    "p50": 0.95,
+    "p95": 2.46,
+    "max": 5.64
+  },
+  "choferes": {
+    "aceptaron": 200,
+    "rechazaron": 29,
+    "ignoraron": 3
+  },
+  "aceptacionesEnConflicto": 0,
+  "asignacionesViajeDeVuelta": 45,
+  "viajesDeVueltaRecotizados": 7,
+  "sinChofer": 0,
+  "pendientesAlFinal": 0,
+  "dobleAsignacionEventos": 0,
+  "dobleAsignacionEnBase": 0,
+  "puntosDeRecorridoGuardados": 859,
+  "duracionSegundos": 54
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+.env
+.env.*.local
+infra/osrm/data/*
+!infra/osrm/data/.gitkeep
+.DS_Store
+Thumbs.db

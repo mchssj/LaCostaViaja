@@ -1,0 +1,27 @@
+{
+  "name": "la-costa-viaja",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema Digital Oficial de Despacho y Movilidad Municipal de Transporte de Pasajeros · Partido de La Costa (PBA)",
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:int": "pnpm --filter @lacosta/api test:int",
+    "dev:api": "turbo run dev --filter=@lacosta/api",
+    "infra:up": "docker compose up -d postgres redis",
+    "infra:down": "docker compose down",
+    "db:migrate": "pnpm --filter @lacosta/db migrate",
+    "db:seed": "pnpm --filter @lacosta/db seed",
+    "db:test": "pnpm --filter @lacosta/db test:sql",
+    "db:reset": "pnpm --filter @lacosta/db reset"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8",
+    "typescript": "~5.9.3"
+  }
+}

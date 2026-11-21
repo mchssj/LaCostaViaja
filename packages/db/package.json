@@ -1,0 +1,16 @@
+{
+  "name": "@lacosta/db",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Migraciones SQL (PostgreSQL + PostGIS), seeds del Partido de La Costa y smoke tests de base de datos",
+  "type": "module",
+  "scripts": {
+    "migrate": "node --env-file-if-exists=../../.env scripts/db.mjs migrate",
+    "seed": "node --env-file-if-exists=../../.env scripts/db.mjs seed",
+    "test:sql": "node --env-file-if-exists=../../.env scripts/db.mjs test",
+    "reset": "node --env-file-if-exists=../../.env scripts/db.mjs reset"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}
