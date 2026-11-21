@@ -4,13 +4,14 @@ import { PresenceModule } from '../presence/presence.module';
 import { RoutingModule } from '../routing/routing.module';
 import { TrackingModule } from '../tracking/tracking.module';
 import { DispatchEvents } from './dispatch.events';
+import { DriverGateway } from './driver.gateway';
 import { DispatchRepository } from './dispatch.repository';
 import { DispatchService } from './dispatch.service';
 import { DispatchWorkers } from './dispatch.workers';
 
 @Module({
   imports: [PresenceModule, FaresModule, RoutingModule, TrackingModule],
-  providers: [DispatchRepository, DispatchEvents, DispatchService, DispatchWorkers],
-  exports: [DispatchService, DispatchEvents],
+  providers: [DispatchRepository, DispatchEvents, DispatchService, DispatchWorkers, DriverGateway],
+  exports: [DispatchService, DispatchEvents, DriverGateway],
 })
 export class DispatchModule {}

@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+
+@layer components {
+  .card { @apply bg-white border-2 border-[#C9D3D8] rounded-[14px] p-4 box-border; }
+  .btn { @apply h-11 border-0 rounded-[10px] bg-[#0F6B72] text-white font-bold text-[15px] px-[18px] cursor-pointer; }
+  .bo { @apply h-11 border-2 border-[#0F6B72] rounded-[10px] bg-white text-[#0F6B72] font-bold text-[15px] px-4 cursor-pointer; }
+  .br { @apply h-11 border-2 border-[#A31F1F] rounded-[10px] bg-white text-[#A31F1F] font-bold text-[14px] px-3 cursor-pointer; }
+  .pl { @apply inline-flex items-center h-[26px] px-[10px] rounded-[13px] text-[13px] font-bold whitespace-nowrap; }
+  .nv { @apply block py-[13px] px-3 rounded-[10px] text-[15px] font-semibold text-[#0A3A3C] no-underline border-l-4 border-transparent; }
+  .nv.on { @apply bg-[#E6F4F5] border-l-[#0F6B72] text-[#0F6B72] font-bold; }
+  .kp { @apply text-[30px] font-bold text-[#0A3A3C] leading-none; }
+}

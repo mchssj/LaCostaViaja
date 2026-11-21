@@ -11,6 +11,9 @@ export interface DispatchEventMap {
   'offer.closed': { tripId: string; driverId: string; offerId: string; outcome: 'REJECTED' | 'EXPIRED' | 'CANCELLED' | 'CLAIM_FAILED' };
   'trip.assigned': { tripId: string; driverId: string; vehicleId: string; isBackhaul: boolean; fareCents: number; repriced: boolean };
   'trip.no_driver': { tripId: string };
+  'trip.status_changed': { tripId: string; status: string; at: string };
+  'trip.fare_changed': { tripId: string; newFareCents: number };
+  'payment.status': { tripId: string; status: string };
 }
 
 @Injectable()

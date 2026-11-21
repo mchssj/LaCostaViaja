@@ -12,3 +12,4 @@ trustPolicy: no-downgrade
 # Paquetes autorizados a correr scripts de instalación. El resto queda bloqueado.
 allowBuilds:
   "@parcel/watcher": false  # lo pide jest-haste-map (watch de Jest); trae binarios precompilados, no necesita compilar
+  "@scarf/scarf": false     # telemetría opcional de @nestjs/swagger; no necesita compilar
