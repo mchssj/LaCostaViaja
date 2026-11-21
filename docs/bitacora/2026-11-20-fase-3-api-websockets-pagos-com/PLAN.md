@@ -1,6 +1,6 @@
 # Plan: Fase 3 · API REST, WebSockets, pagos/vouchers y alerta COM
 
-> Planeación original. Estado: **propuesta**, pendiente de aprobación.
+> Planeación original. Estado: **aprobado el 2026-11-21**. Implementación iniciada por el agente de base de datos (migración `20261121090000_api_pagos_com.sql`).
 
 ## Decisiones tomadas
 

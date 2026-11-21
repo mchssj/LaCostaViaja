@@ -19,4 +19,4 @@ Lo que quedó sin terminar o sin desplegar está resumido en [`../PENDIENTES.md`
 |---|---|---|
 | 2026-11-20 | [Fase 1: monorepo, esquema PostGIS y motor tarifario](2026-11-20-fase-1-monorepo-postgis-tarifas/) | Probado en local (2026-11-20) contra PostGIS 3.4 en Docker; sin commit ni despliegue |
 | 2026-11-20 | [Fase 2: Redis GPS, colas de despacho y lock atómico](2026-11-20-fase-2-redis-gps-despacho/) | Probado en local (2026-11-20): integración, concurrencia y simulación de temporada; sin commit ni despliegue |
-| 2026-11-20 | [Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM](2026-11-20-fase-3-api-websockets-pagos-com/) | Planeado, pendiente de aprobación |
+| 2026-11-20 | [Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM](2026-11-20-fase-3-api-websockets-pagos-com/) | Aprobado 2026-11-21, implementación iniciada (base de datos) |

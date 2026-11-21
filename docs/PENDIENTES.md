@@ -1,6 +1,6 @@
 # Pendientes
 
-Todo lo que se planteó o se empezó y todavía no está terminado o desplegado. Actualizado el **2026-11-20**.
+Todo lo que se planteó o se empezó y todavía no está terminado o desplegado. Actualizado el **2026-11-21**.
 
 ## Fase 1: monorepo, esquema PostGIS y motor tarifario (2026-11-20): probada en local, sin commit ni despliegue
 
@@ -38,7 +38,7 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
     - Prueba de carga real.
   - No correr `pnpm build` con la preview de la API abierta: borra `dist/` y la preview se cae (hay que reiniciarla).
 
-## Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM (2026-11-20): planeada, pendiente de aprobación
+## Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM (2026-11-20): aprobada; base de datos implementada y probada (2026-11-21); API pendiente
 
 - **Estado:** plan escrito, sin implementar. Detalle: [`2026-11-20-fase-3-api-websockets-pagos-com`](bitacora/2026-11-20-fase-3-api-websockets-pagos-com/PLAN.md).
 - **Falta:**
