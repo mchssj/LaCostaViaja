@@ -26,7 +26,7 @@ export default function CotizarPage() {
     const destination = JSON.parse(sessionStorage.getItem('lc_destination') ?? 'null');
     if (!origin || !destination) { router.push('/'); return; }
     setLoading(true);
-    apiFetch<Quote>('/fares/quote', {
+    apiFetch<Quote>('/v1/fares/quote', {
       method: 'POST',
       body: JSON.stringify({ origin, destination, serviceType: 'TAXI' }),
     })
