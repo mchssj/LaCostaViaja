@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "LaCostaViaja Chofer",
+    "slug": "lacosta-driver",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "lacosta-driver",
+    "userInterfaceStyle": "light",
+    "android": { "package": "com.lacosta.driver" }
+  }
+}

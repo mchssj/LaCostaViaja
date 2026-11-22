@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "LaCostaViaja Pasajero",
+    "slug": "lacosta-passenger",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "lacosta-passenger",
+    "userInterfaceStyle": "light",
+    "android": { "package": "com.lacosta.passenger" },
+    "ios": { "bundleIdentifier": "com.lacosta.passenger" }
+  }
+}
