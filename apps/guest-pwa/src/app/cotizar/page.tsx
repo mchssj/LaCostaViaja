@@ -20,10 +20,14 @@ export default function CotizarPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [routeLabel, setRouteLabel] = useState('');
 
   useEffect(() => {
     const origin = JSON.parse(sessionStorage.getItem('lc_origin') ?? 'null');
     const destination = JSON.parse(sessionStorage.getItem('lc_destination') ?? 'null');
+    const on = sessionStorage.getItem('lc_origin_name') ?? '';
+    const dn = sessionStorage.getItem('lc_destination_name') ?? '';
+    setRouteLabel(`${on} → ${dn}`);
     if (!origin || !destination) { router.push('/'); return; }
     setLoading(true);
     apiFetch<Quote>('/v1/fares/quote', {
@@ -63,6 +67,7 @@ export default function CotizarPage() {
     <main className="min-h-screen flex flex-col items-center p-6 bg-[#F4F8F8]">
       <div className="w-full max-w-md flex flex-col gap-4">
         <h1 className="text-[22px] font-bold text-[#0A3A3C]">Cotización</h1>
+        <div className="text-[13px] text-[#34454D]">{routeLabel}</div>
         {error && <div className="text-[13px] font-semibold text-[#A31F1F]">{error}</div>}
         {quote && (
           <div className="bg-white border-2 border-[#C9D3D8] rounded-[14px] p-4 flex flex-col gap-2">
