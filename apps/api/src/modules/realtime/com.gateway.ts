@@ -8,6 +8,7 @@ import {
   type OnGatewayConnection,
   type OnGatewayInit,
 } from '@nestjs/websockets';
+import { hasPermission, OPERATOR_ROLES } from '@lacosta/domain';
 import type { Pool } from 'pg';
 import type { Namespace, Socket } from 'socket.io';
 import { PG_POOL } from '../../database/database.module';
@@ -34,7 +35,8 @@ export class ComGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   async handleConnection(client: Socket): Promise<void> {
-    if (!(await authenticateSocket(client, this.jwt, ['COM_OPERATOR', 'MUNICIPAL_ADMIN']))) return;
+    // Ver alertas: COM, administrador y auditor (com.alerts.view). Las acciones van por REST con su permiso.
+    if (!(await authenticateSocket(client, this.jwt, OPERATOR_ROLES.filter((r) => hasPermission(r, 'com.alerts.view'))))) return;
     await client.join('com');
     // Al conectar (o reconectar) recibe el estado actual: no se pierde una alerta por un corte.
     const { rows } = await this.pool.query(

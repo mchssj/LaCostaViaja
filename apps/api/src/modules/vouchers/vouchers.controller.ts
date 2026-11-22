@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query, VERSION_NEUTR
 import { ApiBearerAuth, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsDateString, IsIn, IsInt, IsOptional, IsString, IsUUID, Length, Matches, Max, Min } from 'class-validator';
-import { Allow } from '../../security/principal';
+import { Allow, OPERATORS, RequirePermission } from '../../security/principal';
 import { VouchersService } from './vouchers.service';
 
 class CreateProgramDto {
@@ -33,31 +33,36 @@ class CreateVoucherDto {
  */
 @ApiTags('vouchers')
 @ApiBearerAuth()
-@Allow('MUNICIPAL_ADMIN')
+@Allow(...OPERATORS)
 @Controller({ version: ['1', VERSION_NEUTRAL] })
 export class VouchersController {
   constructor(private readonly vouchers: VouchersService) {}
 
+  @RequirePermission('vouchers.manage')
   @Post('municipal-programs')
   createProgram(@Body() body: CreateProgramDto) {
     return this.vouchers.createProgram(body);
   }
 
+  @RequirePermission('vouchers.view')
   @Get('municipal-programs')
   listPrograms() {
     return this.vouchers.listPrograms();
   }
 
+  @RequirePermission('vouchers.manage')
   @Post('vouchers')
   createVoucher(@Body() body: CreateVoucherDto) {
     return this.vouchers.createVoucher(body);
   }
 
+  @RequirePermission('vouchers.view')
   @Get('vouchers')
   listVouchers(@Query('programId') programId?: string) {
     return this.vouchers.listVouchers(programId);
   }
 
+  @RequirePermission('vouchers.view')
   @Get('vouchers/:id')
   getVoucher(@Param('id', ParseUUIDPipe) id: string) {
     return this.vouchers.getVoucher(id);

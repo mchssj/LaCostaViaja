@@ -16,6 +16,8 @@ import { TrackingModule } from './modules/tracking/tracking.module';
 import { TripEventsModule } from './modules/trip-events/trip-events.module';
 import { TripsModule } from './modules/trips/trips.module';
 import { VouchersModule } from './modules/vouchers/vouchers.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { SettingsModule } from './modules/settings/settings.module';
 import { RedisModule } from './redis/redis.module';
 import { SecurityModule } from './security/security.module';
 
@@ -39,6 +41,8 @@ import { SecurityModule } from './security/security.module';
     PanicModule,
     VouchersModule,
     PaymentsModule,
+    SettingsModule,
+    AdminModule,
   ],
   controllers: [HealthController],
 })

@@ -2,12 +2,13 @@ import { Controller, Get, Inject, ParseUUIDPipe, Query, VERSION_NEUTRAL } from '
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Pool } from 'pg';
 import { PG_POOL } from '../../database/database.module';
-import { Allow, OPERATORS } from '../../security/principal';
+import { Allow, OPERATORS, RequirePermission } from '../../security/principal';
 
-/** Lectura del cuadro tarifario para el panel (la edición es de la Fase 5). */
+/** Lectura del cuadro tarifario para el panel (la edición está en el módulo admin). */
 @ApiTags('tarifas')
 @ApiBearerAuth()
 @Allow(...OPERATORS)
+@RequirePermission('tariffs.view')
 @Controller({ version: ['1', VERSION_NEUTRAL] })
 export class TariffsController {
   constructor(@Inject(PG_POOL) private readonly pool: Pool) {}

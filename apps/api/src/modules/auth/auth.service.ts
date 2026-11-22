@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DomainError } from '@lacosta/domain';
+import { DomainError, MFA_REQUIRED_ROLES, permissionsOf, ROLE_LABELS } from '@lacosta/domain';
 import { randomInt, randomUUID } from 'node:crypto';
 import type { Pool } from 'pg';
 import { APP_CONFIG, type AppConfig } from '../../config/app-config';
 import { PG_POOL } from '../../database/database.module';
 import { hashSecret, randomToken, sha256Hex, verifySecret } from '../../security/crypto';
 import { JwtService } from '../../security/jwt.service';
-import type { OperatorRole, Principal } from '../../security/principal';
+import { AuditService } from '../../security/audit.service';
+import type { OperatorRole, Principal, RequestMeta } from '../../security/principal';
+import { MfaService } from './mfa.service';
 import { QrCodeService } from './qr-code.service';
 import { SMS_PROVIDER, type ISmsProvider } from './sms.provider';
 
@@ -40,46 +42,117 @@ export class AuthService {
     @Inject(SMS_PROVIDER) private readonly sms: ISmsProvider,
     private readonly jwt: JwtService,
     private readonly qr: QrCodeService,
+    private readonly audit: AuditService,
+    private readonly mfa: MfaService,
   ) {}
 
   // ------------------------------------------------------------ operadores
-  async loginOperator(username: string, password: string) {
+  /**
+   * Paso 1: usuario y contraseña. Si la cuenta tiene segundo factor, NO se emite sesión: se devuelve
+   * un comprobante corto (mfaToken) para el paso 2. Si el rol exige 2FA y todavía no lo activó, o
+   * la contraseña es temporal, la sesión queda en modo "configuración pendiente" (ver AuthGuard).
+   */
+  async loginOperator(username: string, password: string, meta?: RequestMeta) {
     const { rows } = await this.pool.query<{
       id: string;
       username: string;
       password_hash: string;
       role: OperatorRole;
       agency_id: string | null;
-      full_name: string | null;
       is_active: boolean;
       locked_until: Date | null;
+      totp_enabled_at: Date | null;
     }>(
-      `SELECT id, username, password_hash, role, agency_id, full_name, is_active, locked_until
-       FROM operator_users WHERE username = $1`,
+      `SELECT id, username, password_hash, role, agency_id, is_active, locked_until, totp_enabled_at
+       FROM operator_users WHERE lower(username) = lower($1)`,
       [username],
     );
     const op = rows[0];
     const ok = await verifySecret(password, op?.password_hash);
     if (!op || !op.is_active) throw invalidCredentials();
     if (op.locked_until && op.locked_until > new Date()) {
-      throw new DomainError('UNAUTHORIZED', 'Cuenta bloqueada temporalmente por intentos fallidos');
+      throw new DomainError('UNAUTHORIZED', 'Cuenta bloqueada temporalmente por intentos fallidos. Pedile a un administrador que la desbloquee o esperá.');
     }
     if (!ok) {
+      const { maxFailedLogins, lockMinutes } = await this.lockPolicy();
       await this.pool.query(
         `UPDATE operator_users
          SET failed_attempts = failed_attempts + 1,
              locked_until = CASE WHEN failed_attempts + 1 >= $2 THEN now() + make_interval(mins => $3) ELSE locked_until END
          WHERE id = $1`,
-        [op.id, MAX_FAILED_ATTEMPTS, LOCK_MINUTES],
+        [op.id, maxFailedLogins, lockMinutes],
       );
+      await this.audit.record({ actor: null, action: 'LOGIN_FAILED', entityType: 'operator_user', entityId: op.id, changes: { username: op.username }, ...(meta ? { meta } : {}) });
       throw invalidCredentials();
     }
-    await this.pool.query(`UPDATE operator_users SET failed_attempts = 0, locked_until = NULL WHERE id = $1`, [op.id]);
-    const principal: Principal = { kind: 'OPERATOR', id: op.id, role: op.role, agencyId: op.agency_id };
+    if (op.totp_enabled_at) {
+      return { mfaRequired: true as const, mfaToken: await this.jwt.signMfaChallenge(op.id) };
+    }
+    return this.completeOperatorLogin(op.id, meta);
+  }
+
+  /** Paso 2 (si tiene 2FA): código de la app o uno de recuperación. */
+  async loginOperatorMfa(mfaToken: string, code: string, meta?: RequestMeta) {
+    const id = await this.jwt.verifyMfaChallenge(mfaToken);
+    await this.mfa.verifyLoginCode(id, code, meta);
+    return this.completeOperatorLogin(id, meta);
+  }
+
+  private async completeOperatorLogin(id: string, meta?: RequestMeta) {
+    await this.pool.query(`UPDATE operator_users SET failed_attempts = 0, locked_until = NULL, last_login_at = now() WHERE id = $1`, [id]);
+    const principal = await this.loadPrincipal('OPERATOR', id);
+    await this.audit.record({ actor: principal, action: 'LOGIN', entityType: 'operator_user', entityId: id, ...(meta ? { meta } : {}) });
+    return { ...(await this.issueSession(principal, 'OPERATOR')), user: await this.operatorProfile(id) };
+  }
+
+  /** Perfil del operador con permisos y configuración pendiente (lo usa el panel para armar el menú). */
+  async operatorProfile(id: string) {
+    const { rows } = await this.pool.query<{
+      id: string;
+      username: string;
+      full_name: string | null;
+      email: string | null;
+      role: OperatorRole;
+      agency_id: string | null;
+      agency_name: string | null;
+      must_change_password: boolean;
+      totp_enabled_at: Date | null;
+      last_login_at: Date | null;
+    }>(
+      `SELECT o.id, o.username, o.full_name, o.email, o.role, o.agency_id, a.trade_name AS agency_name,
+              o.must_change_password, o.totp_enabled_at, o.last_login_at
+       FROM operator_users o LEFT JOIN agencies a ON a.id = o.agency_id WHERE o.id = $1`,
+      [id],
+    );
+    const o = rows[0];
+    if (!o) throw new DomainError('UNAUTHORIZED', 'Usuario inexistente');
+    const mfaRequired = MFA_REQUIRED_ROLES.includes(o.role);
+    const setupRequired = [...(o.must_change_password ? ['PASSWORD'] : []), ...(mfaRequired && !o.totp_enabled_at ? ['MFA'] : [])];
     return {
-      ...(await this.issueSession(principal, 'OPERATOR')),
-      user: { id: op.id, username: op.username, fullName: op.full_name, role: op.role, agencyId: op.agency_id },
+      id: o.id,
+      kind: 'OPERATOR' as const,
+      username: o.username,
+      fullName: o.full_name,
+      email: o.email,
+      role: o.role,
+      roleName: ROLE_LABELS[o.role].name,
+      agencyId: o.agency_id,
+      agencyName: o.agency_name,
+      permissions: permissionsOf(o.role),
+      mfaEnabled: o.totp_enabled_at !== null,
+      mfaRequired,
+      setupRequired,
+      lastLoginAt: o.last_login_at,
     };
+  }
+
+  /** Política de bloqueo editable desde Configuración (con el valor de código como respaldo). */
+  private async lockPolicy(): Promise<{ maxFailedLogins: number; lockMinutes: number }> {
+    const { rows } = await this.pool
+      .query<{ key: string; value: number }>(`SELECT key, value FROM system_settings WHERE key IN ('security.max_failed_logins', 'security.lock_minutes')`)
+      .catch(() => ({ rows: [] as Array<{ key: string; value: number }> }));
+    const get = (k: string, d: number) => Number(rows.find((r) => r.key === k)?.value ?? d);
+    return { maxFailedLogins: get('security.max_failed_logins', MAX_FAILED_ATTEMPTS), lockMinutes: get('security.lock_minutes', LOCK_MINUTES) };
   }
 
   // ------------------------------------------------------------ choferes
@@ -269,6 +342,11 @@ export class AuthService {
     const { rows } = await this.pool.query<{ status: string }>(`SELECT status FROM drivers WHERE id = $1`, [id]);
     if (!rows[0] || rows[0].status === 'REVOKED') throw new DomainError('UNAUTHORIZED', 'Chofer dado de baja');
     return { kind: 'DRIVER', id };
+  }
+
+  /** Nueva sesión para un operador (tras cambiar su contraseña o activar 2FA se emite una limpia). */
+  async issueOperatorSession(id: string): Promise<SessionTokens> {
+    return this.issueSession(await this.loadPrincipal('OPERATOR', id), 'OPERATOR');
   }
 
   private async issueSession(principal: Principal, subjectKind: SubjectKind): Promise<SessionTokens> {

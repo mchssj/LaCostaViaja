@@ -47,6 +47,11 @@ export interface FareQuoteRequest {
    * de un viaje interurbano, el Retorno Interurbano se bonifica (el chofer termina en su casa).
    */
   readonly assignedDriverBaseLocalityId?: string;
+  /**
+   * USO INTERNO (simulador del panel). Cotiza con este cuadro (puede ser un borrador) en vez del
+   * aprobado vigente. Nunca expuesto en /fares/quote.
+   */
+  readonly scheduleId?: string;
 }
 
 /**
@@ -69,7 +74,9 @@ export class FareCalculatorService {
     const quotedAt = this.clock.now();
     const pricingInstant = request.pricingInstant ?? quotedAt;
 
-    const schedule = await this.tariffs.findScheduleAt(pricingInstant);
+    const schedule = request.scheduleId
+      ? ((await this.tariffs.findScheduleById?.(request.scheduleId)) ?? null)
+      : await this.tariffs.findScheduleAt(pricingInstant);
     if (!schedule) {
       throw new TariffNotConfiguredError('No hay un cuadro tarifario aprobado vigente para el instante solicitado', {
         pricingInstant: pricingInstant.toISOString(),

@@ -17,7 +17,7 @@ import { TrackingService } from '../src/modules/tracking/tracking.service';
 import { TripsService } from '../src/modules/trips/trips.service';
 import { RedisStateStore } from '../src/redis/redis-state.store';
 import { REDIS } from '../src/redis/redis.tokens';
-import { hashSecret } from '../src/security/crypto';
+import { base32Decode, hashSecret, hotp } from '../src/security/crypto';
 import { cleanupTestData, closeOpenTestTrips, createTestFleet, offset, randomTag, sleep, type TestDriver } from './support/dispatch-fixtures';
 import type Redis from 'ioredis';
 
@@ -92,6 +92,12 @@ describeIf('Fase 3 · API, permisos, WebSockets, pagos, vouchers y pánico (E2E)
     const username = `test-${tag.toLowerCase()}-${role.toLowerCase()}-${randomUUID().slice(0, 6)}`;
     await pool.query(`INSERT INTO operator_users (username, password_hash, role) VALUES ($1, $2, $3)`, [username, await hashSecret('clave-de-prueba'), role]);
     const res = await http().post('/api/auth/operator/login').send({ username, password: 'clave-de-prueba' }).expect(200);
+    // Fase 5: el Administrador tiene que activar el segundo factor antes de operar.
+    if (res.body.user.setupRequired?.includes('MFA')) {
+      const setup = await http().post('/api/auth/me/mfa/setup').set(auth(res.body.accessToken)).expect(200);
+      const code = hotp(base32Decode(setup.body.secret), Math.floor(Date.now() / 30_000));
+      await http().post('/api/auth/me/mfa/enable').set(auth(res.body.accessToken)).send({ code }).expect(200);
+    }
     return res.body.accessToken;
   }
 

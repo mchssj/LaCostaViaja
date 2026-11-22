@@ -1,7 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { hasPermission, maskDigits } from '@lacosta/domain';
 import type { Pool } from 'pg';
 import { PG_POOL } from '../../database/database.module';
 import type { Principal } from '../../security/principal';
+
+/**
+ * Datos personales (Ley 25.326): DNI, CUIL, teléfono y domicilio completos solo con
+ * personal_data.view. El resto los recibe enmascarados; el enmascarado lo hace la API, no el panel.
+ */
+export function maskPersonal<T extends Record<string, unknown>>(p: Principal, row: T, fields: Array<keyof T>): T {
+  if (p.kind !== 'OPERATOR' || hasPermission(p.role, 'personal_data.view')) return row;
+  const out: Record<string, unknown> = { ...row };
+  for (const f of fields) {
+    const v = out[f as string];
+    if (typeof v === 'string') out[f as string] = f === 'address' ? '(reservado)' : maskDigits(v);
+  }
+  return out as T;
+}
 
 /**
  * Consultas de flota para el panel. Columnas explícitas (nunca pin_hash) y alcance por rol:
@@ -24,7 +39,7 @@ export class FleetService {
        WHERE ($1::uuid IS NULL OR a.id = $1) ORDER BY a.trade_name`,
       [this.agencyScope(p)],
     );
-    return rows;
+    return rows.map((r) => maskPersonal(p, r, ['phone']));
   }
 
   async listDrivers(p: Principal) {
@@ -41,7 +56,7 @@ export class FleetService {
        ORDER BY d.last_name, d.first_name`,
       [this.agencyScope(p)],
     );
-    return rows;
+    return rows.map((r) => maskPersonal(p, r, ['dni', 'phone']));
   }
 
   async listVehicles(p: Principal) {

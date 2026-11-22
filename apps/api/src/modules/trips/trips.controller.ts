@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, VERSION_NEUTRAL } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Idempotent } from '../../security/idempotency.interceptor';
-import { Allow, CurrentPrincipal, OPERATORS, PASSENGERS, type Principal } from '../../security/principal';
+import { Allow, CurrentPrincipal, OPERATORS, PASSENGERS, RequirePermission, type Principal } from '../../security/principal';
 import { RateLimit } from '../../security/rate-limit';
 import { CancelTripDto, ChangeDestinationDto, CreateTripDto, RateTripDto, TripActionDto } from './trips.dto';
 import { TripsService } from './trips.service';
@@ -36,6 +36,7 @@ export class TripsController {
   }
 
   @Allow(...PASSENGERS, 'DRIVER', ...OPERATORS)
+  @RequirePermission('trips.view')
   @Get(':id')
   get(@CurrentPrincipal() p: Principal, @Param('id', ParseUUIDPipe) id: string) {
     return this.trips.get(p, id);
@@ -43,6 +44,7 @@ export class TripsController {
 
   /** Eventos posteriores a afterSeq: alternativa REST al WebSocket (mala señal, polling). */
   @Allow(...PASSENGERS, 'DRIVER', ...OPERATORS)
+  @RequirePermission('trips.view')
   @Get(':id/events')
   events(@CurrentPrincipal() p: Principal, @Param('id', ParseUUIDPipe) id: string, @Query('afterSeq') afterSeq?: string) {
     const n = Number(afterSeq ?? 0);
@@ -72,6 +74,7 @@ export class TripsController {
 
   /** Pasajero: cancela. Chofer: devuelve el viaje (antes de llegar) o cierra por "no se presentó". Operador: cancela. */
   @Allow(...PASSENGERS, 'DRIVER', ...OPERATORS)
+  @RequirePermission('trips.cancel')
   @Post(':id/cancel')
   @HttpCode(HttpStatus.OK)
   cancel(@CurrentPrincipal() p: Principal, @Param('id', ParseUUIDPipe) id: string, @Body() body: CancelTripDto) {

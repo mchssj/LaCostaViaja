@@ -54,6 +54,28 @@ interface RuleRow {
   backhaul_waives_return: boolean;
 }
 
+const SCHEDULE_SELECT = `
+  SELECT id, code, legal_instrument, timezone,
+         to_char(night_starts_at, 'HH24:MI') AS night_starts_at,
+         to_char(night_ends_at, 'HH24:MI')   AS night_ends_at,
+         interurban_min_outside_m, rounding_step_cents, quote_ttl_seconds,
+         lower(validity) AS valid_from, upper(validity) AS valid_to
+  FROM tariff_schedules`;
+
+function toSchedule(r: ScheduleRow): TariffSchedule {
+  return {
+    id: r.id,
+    code: r.code,
+    legalInstrument: r.legal_instrument,
+    timeZone: r.timezone,
+    nightStartsAt: r.night_starts_at,
+    nightEndsAt: r.night_ends_at,
+    interurbanMinOutsideMeters: r.interurban_min_outside_m,
+    roundingStepCents: r.rounding_step_cents,
+    quoteTtlSeconds: r.quote_ttl_seconds,
+  };
+}
+
 interface ScheduleWindow {
   readonly schedule: TariffSchedule;
   readonly validFrom: number;
@@ -103,31 +125,23 @@ export class PostgresTariffRepository implements ITariffRepository {
     return [...byKey.values()].find((r) => r.id === ruleId) ?? null;
   }
 
+  async findScheduleById(scheduleId: string): Promise<TariffSchedule | null> {
+    const { rows } = await this.pool.query<ScheduleRow>(`${SCHEDULE_SELECT} WHERE id = $1`, [scheduleId]);
+    return rows[0] ? toSchedule(rows[0]) : null;
+  }
+
+  invalidate(): void {
+    this.schedules.invalidate();
+    this.seasons.invalidate();
+    this.rules.invalidate();
+  }
+
   private async loadSchedules(): Promise<readonly ScheduleWindow[]> {
-    const { rows } = await this.pool.query<ScheduleRow>(
-      `SELECT id, code, legal_instrument, timezone,
-              to_char(night_starts_at, 'HH24:MI') AS night_starts_at,
-              to_char(night_ends_at, 'HH24:MI')   AS night_ends_at,
-              interurban_min_outside_m, rounding_step_cents, quote_ttl_seconds,
-              lower(validity) AS valid_from, upper(validity) AS valid_to
-       FROM tariff_schedules
-       WHERE status = 'APPROVED'
-       ORDER BY lower(validity)`,
-    );
+    const { rows } = await this.pool.query<ScheduleRow>(`${SCHEDULE_SELECT} WHERE status = 'APPROVED' ORDER BY lower(validity)`);
     return rows.map((r) => ({
       validFrom: r.valid_from.getTime(),
       validTo: r.valid_to ? r.valid_to.getTime() : null,
-      schedule: {
-        id: r.id,
-        code: r.code,
-        legalInstrument: r.legal_instrument,
-        timeZone: r.timezone,
-        nightStartsAt: r.night_starts_at,
-        nightEndsAt: r.night_ends_at,
-        interurbanMinOutsideMeters: r.interurban_min_outside_m,
-        roundingStepCents: r.rounding_step_cents,
-        quoteTtlSeconds: r.quote_ttl_seconds,
-      },
+      schedule: toSchedule(r),
     }));
   }
 

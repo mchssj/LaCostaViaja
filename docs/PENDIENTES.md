@@ -68,9 +68,25 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
     - QR firmados impresos.
   - **Decidir con el municipio** si el chofer usará la PWA, la app Expo o las dos en producción.
 
-## Fase 5: panel municipal, prototipo de kyan sin plan (2026-11-21/22)
+## Fase 5: panel administrativo (2026-11-22): implementado y probado en local, con commit en `feat/fase-3-4-api-panel-chofer` (PR #1), sin despliegue
 
-- **Estado:** hay prototipo de `admin-web` (Leaflet, consola COM) sin `PLAN.md`. Antes de seguir, escribir el plan de la fase según la convención.
-- **Panel, tablas legibles (2026-11-22):** hecho en Tarifas, Flota y Vouchers ([`2026-11-22-panel-tablas-legibles`](bitacora/2026-11-22-panel-tablas-legibles/)). Falta:
-  - Ver las tablas de Vouchers con datos y probar el alta de programas y vouchers (los formularios ya piden pesos desde el 2026-11-22) con un usuario administrador municipal.
-  - Que el panel renueve el token: el acceso vence a los 15 minutos y hoy obliga a volver a ingresar.
+- **Estado:**
+  - Usuarios con 5 roles y permisos, y segundo factor obligatorio para Administrador y Habilitaciones.
+  - Tarifas configurables con doble control y simulador.
+  - Configuración editable en caliente.
+  - Habilitaciones con documentos, verificación, estados y vencimientos.
+  - Auditoría, y renovación automática de la sesión del panel.
+  - Detalle: [`2026-11-22-fase-5-panel-administracion`](bitacora/2026-11-22-fase-5-panel-administracion/). Antes, tablas legibles: [`2026-11-22-panel-tablas-legibles`](bitacora/2026-11-22-panel-tablas-legibles/).
+- **Falta:**
+  - **Definir con el municipio:**
+    - Documentos obligatorios por tipo (hoy, una lista provisoria en `habilitations.service.ts`).
+    - Plazos de conservación de datos: guardados en Configuración, sin efecto todavía.
+    - Cargo por cancelación: guardado, sin efecto todavía.
+    - Si el Operador COM puede cancelar viajes (hoy sí).
+    - Quiénes serán los administradores iniciales.
+  - **Alta y edición de agencias** desde el panel. Hoy solo se cambia su estado.
+  - **Dibujar el QR** para imprimir desde el panel: necesita una librería nueva, que se instala con aviso. Hoy se genera la dirección firmada.
+  - **Almacenamiento de documentos en producción:** S3 o el del municipio, con la misma interfaz `IFileStorage` (Fase 6).
+  - **Probar en el navegador** la aprobación de una tarifa con dos administradores, la subida de documentos desde el panel y las pantallas como Habilitaciones y como agencia (la API ya está probada).
+  - **Clave de cifrado del 2FA:** hoy se deriva de `JWT_SECRET`, así que rotar ese secreto obliga a reconfigurar el 2FA. Evaluar una clave propia antes de producción.
+  - **Vouchers:** probar el alta de programas y vouchers con un administrador (los formularios ya piden pesos).

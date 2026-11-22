@@ -181,6 +181,9 @@ importers:
       '@lacosta/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@lacosta/driver-core':
+        specifier: workspace:*
+        version: link:../../packages/driver-core
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4

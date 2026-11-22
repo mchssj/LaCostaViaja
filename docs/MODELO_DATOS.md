@@ -43,14 +43,15 @@ erDiagram
 | `drivers` | Choferes: licencia profesional, habilitación municipal, estado, `accepts_interurban`, PIN de autenticación | DNI/CUIL únicos, CUIL coincide con DNI; `pin_hash`, `pin_failed_attempts`, `pin_locked_until` (Fase 3); `verified_by`/`verified_at` (Fase 5) |
 | `vehicles` | Vehículos: VTV, seguro de pasajeros, habilitación | Patente Mercosur o anterior; remis exige agencia; `verified_by`/`verified_at` (Fase 5) |
 | `driver_vehicle_compliance` | Autorización chofer↔vehículo con vigencia | `EXCLUDE` sin vigencias superpuestas por par |
-| `tariff_schedules` | Cuadro tarifario aprobado: vigencia, franja nocturna, umbral, redondeo | `EXCLUDE` sin cuadros aprobados superpuestos |
-| `tariff_rules` | Valores por servicio × alcance × temporada × franja | Único por combinación y cuadro |
+| `tariff_schedules` | Cuadro tarifario (borrador, aprobado o retirado): vigencia, franja nocturna, umbral, redondeo | `EXCLUDE` sin cuadros aprobados superpuestos. Fase 5: `created_by`, `approved_by_user`, `retired_at`; CHECK de doble control (aprueba alguien distinto del autor); trigger: un aprobado no se edita (solo se retira o se acorta su vigencia a futuro) y un retirado no vuelve |
+| `tariff_rules` | Valores por servicio × alcance × temporada × franja | Único por combinación y cuadro. Fase 5: trigger, solo se modifican mientras el cuadro es borrador |
 | `season_periods` | Calendario de temporada alta | `GIST(period)` |
 | `passengers` | Registrados e invitados (QR, solo hash de sesión) | `guest_session_hash` único |
 | `trips` | Viajes con tarifa cotizada, desglose, estado y progreso de búsqueda (`dispatch_round`, `dispatch_started_at`) | `GIST` en origen/destino, `BRIN(requested_at)`, un viaje activo por chofer y por vehículo; Fase 3: `metered_fare_cents`, `final_breakdown`, `passenger_rating`, `cancellation_fee_cents` |
 | `trip_offers` | Cada oferta de un viaje a un chofer: ronda, rango, puntaje y desglose, ETA, Viaje de Vuelta, resultado | Una sola oferta `PENDING` por viaje (índice único parcial) |
 | `trip_track_points` | Recorrido GPS del viaje desde la asignación | PK `(trip_id, recorded_at)` idempotente, `GIST(geom)`, `BRIN(recorded_at)` |
-| `operator_users` | Operadores COM, agencia y municipio (usuario + contraseña) | `username` único; rol `COM_OPERATOR`/`AGENCY_OPERATOR`/`MUNICIPAL_ADMIN`; bloqueo por intentos |
+| `operator_users` | Usuarios del panel (usuario + contraseña + segundo factor) | `username` único; rol `MUNICIPAL_ADMIN`/`LICENSING_OFFICER`/`COM_OPERATOR`/`AUDITOR`/`AGENCY_OPERATOR` (los dos del medio, Fase 5); bloqueo por intentos. Fase 5: `email` (único), `must_change_password`, `password_changed_at`, `totp_secret_enc` (cifrado AES-GCM), `totp_enabled_at`, `recovery_codes_hash`, `last_login_at`, `sessions_revoked_at` (tokens anteriores dejan de valer), `created_by` |
+| `system_settings` | Parámetros de negocio editables desde el panel (Fase 5) | `key` PK; tipo, `min_value`/`max_value` (CHECK de rango), unidad, `updated_by`/`updated_at`. Mientras `updated_by` es NULL rige la variable de entorno |
 | `auth_refresh_tokens` | Refresh tokens rotativos (solo hash) | `token_hash` único; `family` para detectar reutilización; vencimiento y revocación |
 | `otp_challenges` | Desafíos OTP para pasajeros registrados | teléfono, hash del código, intentos, vencimiento |
 | `idempotency_keys` | Idempotencia HTTP (crear viaje, pánico, pagos) | UNIQUE `(actor_kind, actor_id, key)`; respuesta guardada 24 h |
@@ -60,8 +61,8 @@ erDiagram
 | `voucher_movements` | Reserva, consumo y liberación de saldo de voucher | monto > 0; `balance_after_cents >= 0` |
 | `trip_events` | Bitácora de eventos del viaje. Su `id` es el `seq` que reciben las apps para recuperar lo perdido al reconectar | `client_event_id` único (reintentos), índice `(trip_id, id)`, `GIST(location)` |
 | `panic_alerts` | Alertas de pánico al COM con snapshot | `client_event_id` único, `GIST(location)`, `pg_notify`; Fase 3: `escalated_at`, `escalation_count` |
-| `habilitation_documents` | Documentos que respaldan una habilitación (DNI, licencia, VTV, seguro, etc.) — solo hash del archivo | Por entidad (chofer/vehículo/agencia); `verified_by`/`verified_at` |
-| `audit_log` | Auditoría de cambios sobre entidades del sistema | actor, action, entity, changes (jsonb), occurred_at |
+| `habilitation_documents` | Documentos que respaldan una habilitación (DNI, licencia, VTV, seguro, etc.). El archivo vive fuera de la base (`storage_key`); acá, su hash | Por entidad (chofer/vehículo/agencia); `verified_by`/`verified_at` = quién lo revisó. Fase 5: `status` (`PENDING`/`VERIFIED`/`REJECTED`, CHECK de forma: un rechazo exige `rejected_reason`), `expires_on`, `storage_key`, `superseded_by` (historial de versiones), índices de documentos vigentes y pendientes |
+| `audit_log` | Auditoría de cambios sobre entidades del sistema (inmutable) | actor, action, entity, changes (jsonb), occurred_at, ip, user_agent. Fase 5: acciones `VERIFY`, `LOGIN`, `LOGIN_FAILED`, `PASSWORD_RESET`, `MFA_CHANGE`, `SESSION_REVOKE`; índice por acción |
 
 ## Vistas y funciones
 

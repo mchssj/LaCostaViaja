@@ -8,10 +8,9 @@ import ComConsole from '@/components/ComConsole';
 export default function ComPage() {
   const router = useRouter();
   useEffect(() => {
-    if (!localStorage.getItem('lc_token')) router.push('/login');
   }, [router]);
   return (
-    <Shell>
+    <Shell requires="com.alerts.view">
       <h1 className="text-[22px] font-bold text-[#0A3A3C]">Consola COM — Alertas de pánico</h1>
       <ComConsole />
     </Shell>

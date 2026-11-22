@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post
 import { ApiBearerAuth, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsDefined, IsIn, IsNumber, IsObject, IsOptional, IsString, IsUUID, Length, Min, ValidateNested } from 'class-validator';
-import { Allow, CurrentPrincipal, PASSENGERS, type Principal } from '../../security/principal';
+import { Allow, CurrentPrincipal, OPERATORS, PASSENGERS, RequirePermission, type Principal } from '../../security/principal';
 import { RateLimit } from '../../security/rate-limit';
 import { PointDto } from '../trips/trips.dto';
 import { PanicService } from './panic.service';
@@ -60,33 +60,38 @@ export class PanicController {
     return this.panic.updateLocation(p, id, body);
   }
 
-  @Allow('COM_OPERATOR', 'MUNICIPAL_ADMIN')
+  @Allow(...OPERATORS)
+  @RequirePermission('com.alerts.view')
   @Get('com/alerts')
   list() {
     return this.panic.listOpen();
   }
 
-  @Allow('COM_OPERATOR', 'MUNICIPAL_ADMIN')
+  @Allow(...OPERATORS)
+  @RequirePermission('com.alerts.view')
   @Get('com/alerts/:id')
   get(@Param('id', ParseUUIDPipe) id: string) {
     return this.panic.get(id);
   }
 
-  @Allow('COM_OPERATOR')
+  @Allow(...OPERATORS)
+  @RequirePermission('com.alerts.act')
   @Post('com/alerts/:id/ack')
   @HttpCode(HttpStatus.OK)
   ack(@CurrentPrincipal() p: Principal, @Param('id', ParseUUIDPipe) id: string) {
     return this.panic.acknowledge(p, id);
   }
 
-  @Allow('COM_OPERATOR')
+  @Allow(...OPERATORS)
+  @RequirePermission('com.alerts.act')
   @Post('com/alerts/:id/units-dispatched')
   @HttpCode(HttpStatus.OK)
   units(@CurrentPrincipal() p: Principal, @Param('id', ParseUUIDPipe) id: string) {
     return this.panic.unitsDispatched(p, id);
   }
 
-  @Allow('COM_OPERATOR')
+  @Allow(...OPERATORS)
+  @RequirePermission('com.alerts.act')
   @Post('com/alerts/:id/resolve')
   @HttpCode(HttpStatus.OK)
   resolve(@CurrentPrincipal() p: Principal, @Param('id', ParseUUIDPipe) id: string, @Body() body: ResolveDto) {

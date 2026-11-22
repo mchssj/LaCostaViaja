@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { apiFetch } from '@/lib/api';
+import { api, API_ORIGIN, apiFetch } from '@/lib/api';
+import { useSession } from '@/lib/session';
 
 interface Alert {
   id: string;
@@ -20,6 +21,7 @@ export default function ComConsole() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Alert | null>(null);
+  const { can } = useSession();
 
   useEffect(() => {
     let socket: Socket | null = null;
@@ -29,13 +31,13 @@ export default function ComConsole() {
         setAlerts(data ?? []);
       } catch (e: any) { setError(e.message); }
     })();
-    const token = typeof window !== 'undefined' ? localStorage.getItem('lc_token') : null;
-    if (token) {
-      socket = io('http://localhost:3000/com', { auth: { token }, transports: ['websocket'] });
-      socket.on('panic.alert', (ev: any) => {
-        setAlerts((prev) => [ev.data ?? ev, ...prev]);
-      });
-    }
+    socket = io(`${API_ORIGIN}/com`, {
+      auth: (cb: (d: object) => void) => { api.freshAccessToken().then((token) => cb({ token })).catch(() => cb({})); },
+      transports: ['websocket'],
+    });
+    socket.on('panic.alert', (ev: any) => {
+      setAlerts((prev) => [ev.data ?? ev, ...prev]);
+    });
     return () => { socket?.disconnect(); };
   }, []);
 
@@ -81,11 +83,15 @@ export default function ComConsole() {
             <div><b>Viaje:</b> {selected.trip_public_code ?? selected.id}</div>
             <div><b>Estado:</b> {selected.status}</div>
             <div><b>Ocurrió:</b> {new Date(selected.occurred_at).toLocaleString()}</div>
-            <div className="flex gap-2 mt-2">
-              <button onClick={() => ack(selected.id)} className="btn h-9 bg-[#B3261E] text-[13px]">Atender</button>
-              <button onClick={() => units(selected.id)} className="bo h-9 text-[13px]">Despachar móvil</button>
-              <button onClick={() => resolve(selected.id)} className="bo h-9 text-[13px]">Resolver</button>
-            </div>
+            {can('com.alerts.act') ? (
+              <div className="flex gap-2 mt-2">
+                <button onClick={() => ack(selected.id)} className="btn h-9 bg-[#B3261E] text-[13px]">Atender</button>
+                <button onClick={() => units(selected.id)} className="bo h-9 text-[13px]">Despachar móvil</button>
+                <button onClick={() => resolve(selected.id)} className="bo h-9 text-[13px]">Resolver</button>
+              </div>
+            ) : (
+              <div className="mt-2 text-[13px] text-[#5B6B72]">Solo lectura: atender y resolver alertas es tarea del Operador COM.</div>
+            )}
           </div>
         )}
       </div>

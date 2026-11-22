@@ -3,6 +3,7 @@ import {
   computeFare,
   DispatchConflictError,
   DomainError,
+  hasPermission,
   InvalidInputError,
   NotFoundError,
   OPEN_TRIP_STATUSES,
@@ -499,9 +500,9 @@ export class TripsService implements OnModuleInit {
     const isDriverAction = ['DRIVER_ARRIVED', 'START', 'COMPLETE', 'DRIVER_CANCEL', 'DRIVER_NO_SHOW'].includes(action);
     if ((p.kind === 'PASSENGER' || p.kind === 'GUEST') && isPassengerAction && trip.passenger_id === p.id) return;
     if (p.kind === 'DRIVER' && isDriverAction && trip.driver_id === p.id) return;
-    if (p.kind === 'OPERATOR' && action === 'OPERATOR_CANCEL') {
-      if (p.role === 'COM_OPERATOR' || p.role === 'MUNICIPAL_ADMIN') return;
-      if (p.role === 'AGENCY_OPERATOR' && trip.agency_id && trip.agency_id === p.agencyId) return;
+    if (p.kind === 'OPERATOR' && action === 'OPERATOR_CANCEL' && hasPermission(p.role, 'trips.cancel')) {
+      if (p.role !== 'AGENCY_OPERATOR') return;
+      if (trip.agency_id && trip.agency_id === p.agencyId) return;
     }
     // No se distingue "no existe" de "no es tuyo" para no filtrar ids de viajes ajenos.
     throw new NotFoundError('Viaje inexistente', { tripId: trip.id });
@@ -515,8 +516,10 @@ export class TripsService implements OnModuleInit {
       const { rowCount } = await this.pool.query(`SELECT 1 FROM trip_offers WHERE trip_id = $1 AND driver_id = $2 AND outcome = 'PENDING'`, [trip.id, p.id]);
       if ((rowCount ?? 0) > 0) return;
     }
-    if (p.kind === 'OPERATOR' && (p.role === 'COM_OPERATOR' || p.role === 'MUNICIPAL_ADMIN')) return;
-    if (p.kind === 'OPERATOR' && p.role === 'AGENCY_OPERATOR' && trip.agency_id === p.agencyId) return;
+    if (p.kind === 'OPERATOR' && hasPermission(p.role, 'trips.view')) {
+      if (p.role !== 'AGENCY_OPERATOR') return;
+      if (trip.agency_id === p.agencyId) return;
+    }
     throw new NotFoundError('Viaje inexistente', { tripId: trip.id });
   }
 

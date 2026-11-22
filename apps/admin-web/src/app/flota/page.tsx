@@ -15,7 +15,6 @@ export default function FlotaPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!localStorage.getItem('lc_token')) { router.push('/login'); return; }
     (async () => {
       try {
         const [d, v, a] = await Promise.all([
@@ -36,7 +35,7 @@ export default function FlotaPage() {
   );
 
   return (
-    <Shell>
+    <Shell requires="fleet.view">
       <h1 className="text-[22px] font-bold text-[#0A3A3C]">2. Flota y Habilitaciones</h1>
       {error && <div className="text-[13px] font-semibold text-[#A31F1F]">{error}</div>}
 

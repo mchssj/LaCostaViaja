@@ -7,11 +7,10 @@ import Shell from '@/components/Shell';
 export default function EstadisticasPage() {
   const router = useRouter();
   useEffect(() => {
-    if (!localStorage.getItem('lc_token')) router.push('/login');
   }, [router]);
 
   return (
-    <Shell>
+    <Shell requires="monitor.view">
       <h1 className="text-[22px] font-bold text-[#0A3A3C]">4. Estadísticas y Turismo</h1>
       <div className="grid grid-cols-4 gap-4">
         <div className="card"><div className="text-[13px] font-semibold text-[#34454D]">Viajes hoy</div><div className="kp">124</div></div>

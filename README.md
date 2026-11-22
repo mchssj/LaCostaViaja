@@ -60,7 +60,7 @@ Invoke-RestMethod -Method Post http://localhost:3000/api/v1/fares/quote -Content
 | 2 | Redis GPS en vivo, colas de despacho por corredor/parada, lock atómico, prioridad de Viaje de Vuelta | ✔ |
 | 3 | API REST + WebSockets del ciclo de vida del viaje, pagos (efectivo / Mercado Pago / vouchers), alertas COM | ✔ (documentación en `/api/docs`) |
 | 4 | App del chofer (PWA y Android) y PWA Modo Invitado por QR | ✔ web probada de punta a punta (Expo sin probar en equipo) |
-| 5 | Panel municipal: habilitaciones, editor tarifario, mapa de calor, consola COM | Prototipo sin plan |
+| 5 | Panel municipal: usuarios y roles con 2FA, editor tarifario con doble control, configuración, habilitaciones y documentos, auditoría, consola COM | ✔ en local (mapa de calor pendiente) |
 | 6 | Pruebas de carga invierno/verano, resiliencia, despliegue y auto-escalado | — |
 
 El detalle de cada fase (plan, documentación, guía de implementación y pruebas) está en la

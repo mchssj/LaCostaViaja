@@ -1,8 +1,13 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, VERSION_NEUTRAL } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Allow, CurrentPrincipal, Public, type Principal } from '../../security/principal';
+import { Allow, AllowDuringSetup, CurrentPrincipal, OPERATORS, Public, ReqMeta, RequirePermission, type Principal, type RequestMeta } from '../../security/principal';
 import { RateLimit } from '../../security/rate-limit';
+import { AccountService } from './account.service';
+import { MfaService } from './mfa.service';
 import {
+  ChangePasswordDto,
+  MfaCodeDto,
+  OperatorMfaDto,
   DriverLoginDto,
   GuestSessionDto,
   IssueQrDto,
@@ -16,14 +21,64 @@ import { AuthService } from './auth.service';
 @ApiTags('auth')
 @Controller({ path: 'auth', version: ['1', VERSION_NEUTRAL] })
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly account: AccountService,
+    private readonly mfa: MfaService,
+  ) {}
 
   @Public()
   @RateLimit({ name: 'login-operator', limit: 10, windowSeconds: 60, by: 'ip' })
   @Post('operator/login')
   @HttpCode(HttpStatus.OK)
-  loginOperator(@Body() body: OperatorLoginDto) {
-    return this.auth.loginOperator(body.username, body.password);
+  loginOperator(@Body() body: OperatorLoginDto, @ReqMeta() meta: RequestMeta) {
+    return this.auth.loginOperator(body.username, body.password, meta);
+  }
+
+  /** Segundo paso del login cuando la cuenta tiene 2FA. */
+  @Public()
+  @RateLimit({ name: 'login-operator-mfa', limit: 10, windowSeconds: 60, by: 'ip' })
+  @Post('operator/mfa')
+  @HttpCode(HttpStatus.OK)
+  loginOperatorMfa(@Body() body: OperatorMfaDto, @ReqMeta() meta: RequestMeta) {
+    return this.auth.loginOperatorMfa(body.mfaToken, body.code, meta);
+  }
+
+  // ------------------------------------------------------------ mi cuenta (operador)
+  @ApiBearerAuth()
+  @Allow(...OPERATORS)
+  @AllowDuringSetup()
+  @Post('me/password')
+  @HttpCode(HttpStatus.OK)
+  changePassword(@CurrentPrincipal() p: Principal, @Body() body: ChangePasswordDto, @ReqMeta() meta: RequestMeta) {
+    return this.account.changePassword(p, body.currentPassword, body.newPassword, meta);
+  }
+
+  @ApiBearerAuth()
+  @Allow(...OPERATORS)
+  @AllowDuringSetup()
+  @Post('me/mfa/setup')
+  @HttpCode(HttpStatus.OK)
+  mfaSetup(@CurrentPrincipal() p: Principal) {
+    return this.mfa.setup(p);
+  }
+
+  @ApiBearerAuth()
+  @Allow(...OPERATORS)
+  @AllowDuringSetup()
+  @Post('me/mfa/enable')
+  @HttpCode(HttpStatus.OK)
+  async mfaEnable(@CurrentPrincipal() p: Principal, @Body() body: MfaCodeDto, @ReqMeta() meta: RequestMeta) {
+    const { recoveryCodes } = await this.mfa.enable(p, body.code, meta);
+    return { recoveryCodes, user: await this.auth.operatorProfile(p.id) };
+  }
+
+  @ApiBearerAuth()
+  @Allow(...OPERATORS)
+  @Post('me/mfa/disable')
+  @HttpCode(HttpStatus.OK)
+  mfaDisable(@CurrentPrincipal() p: Principal, @Body() body: MfaCodeDto, @ReqMeta() meta: RequestMeta) {
+    return this.mfa.disable(p, body.code, meta);
   }
 
   @Public()
@@ -73,15 +128,18 @@ export class AuthController {
     return this.auth.logout(body.refreshToken);
   }
 
+  /** Operadores: perfil con permisos y configuración pendiente. Resto: el principal. */
   @ApiBearerAuth()
+  @AllowDuringSetup()
   @Get('me')
-  me(@CurrentPrincipal() principal: Principal) {
-    return { user: principal };
+  async me(@CurrentPrincipal() principal: Principal) {
+    return { user: principal.kind === 'OPERATOR' ? await this.auth.operatorProfile(principal.id) : principal };
   }
 
   /** Genera el contenido de un QR firmado para imprimir (paradas, hoteles, accesos de playa). */
   @ApiBearerAuth()
-  @Allow('MUNICIPAL_ADMIN')
+  @Allow(...OPERATORS)
+  @RequirePermission('qr.issue')
   @Post('guest-qr-codes')
   issueQr(@Body() body: IssueQrDto) {
     return this.auth.issueQr(body.label, body.zoneCode ?? null);

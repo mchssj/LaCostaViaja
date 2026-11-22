@@ -11,11 +11,10 @@ const MapaCorredor = dynamic(() => import('@/components/MapaCorredor'), { ssr: f
 export default function MonitoreoPage() {
   const router = useRouter();
   useEffect(() => {
-    if (!localStorage.getItem('lc_token')) router.push('/login');
   }, [router]);
 
   return (
-    <Shell>
+    <Shell requires="monitor.view">
       <div className="grid grid-cols-4 gap-4">
         <div className="card"><div className="text-[13px] font-semibold text-[#34454D]">Móviles habilitados online</div><div className="kp">184</div></div>
         <div className="card"><div className="text-[13px] font-semibold text-[#34454D]">Viajes activos ahora</div><div className="kp">62</div></div>

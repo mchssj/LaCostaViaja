@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Shell from '@/components/Shell';
 import { apiFetch } from '@/lib/api';
+import { useSession } from '@/lib/session';
 import { fecha, fechaHora, pesos, pesosACentavos } from '@/lib/format';
 import { texto } from '@/lib/labels';
 import { Badge, CardTitle, EmptyRow, Two } from '@/components/TableParts';
@@ -49,6 +50,7 @@ function FormMsg({ msg }: { msg: Msg }) {
 
 export default function VouchersPage() {
   const router = useRouter();
+  const { can } = useSession();
   const [programs, setPrograms] = useState<any[]>([]);
   const [vouchers, setVouchers] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +71,6 @@ export default function VouchersPage() {
   }
 
   useEffect(() => {
-    if (!localStorage.getItem('lc_token')) { router.push('/login'); return; }
     load();
   }, [router]);
 
@@ -126,11 +127,11 @@ export default function VouchersPage() {
   }
 
   return (
-    <Shell>
-      <h1 className="text-[22px] font-bold text-[#0A3A3C]">5. Vouchers y Beneficios</h1>
+    <Shell requires="vouchers.view">
+      <h1 className="text-[22px] font-bold text-[#0A3A3C]">Vouchers y Beneficios</h1>
       {error && <div className="text-[13px] font-semibold text-[#A31F1F]">{error}</div>}
 
-      <div className="grid grid-cols-2 gap-4">
+      {can('vouchers.manage') && <div className="grid grid-cols-2 gap-4">
         <form onSubmit={createProgram} className="card flex flex-col gap-3">
           <h3 className="text-[16px] font-bold text-[#0A3A3C]">Nuevo programa</h3>
           <Field label="Nombre del programa">
@@ -186,7 +187,7 @@ export default function VouchersPage() {
           <button type="submit" className="btn disabled:opacity-60" disabled={busy === 'voucher'}>{busy === 'voucher' ? 'Creando…' : 'Crear voucher'}</button>
           <FormMsg msg={vMsg} />
         </form>
-      </div>
+      </div>}
 
       <div className="card">
         <CardTitle title="Programas municipales" count={programs.length} hint="Disponible = presupuesto − gastado − reservado en viajes en curso." />

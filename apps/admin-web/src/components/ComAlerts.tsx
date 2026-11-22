@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { apiFetch } from '@/lib/api';
+import { api, API_ORIGIN, apiFetch } from '@/lib/api';
+import { useSession } from '@/lib/session';
 
 interface Alert {
   id: string;
@@ -20,6 +21,7 @@ interface Alert {
 export default function ComAlerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const { can } = useSession();
 
   useEffect(() => {
     let socket: Socket | null = null;
@@ -32,13 +34,14 @@ export default function ComAlerts() {
       }
     })();
 
-    const token = localStorage.getItem('lc_token');
-    if (token) {
-      socket = io('http://localhost:3000/com', { auth: { token }, transports: ['websocket'] });
-      socket.on('panic.alert', (ev: any) => {
-        setAlerts((prev) => [ev.data ?? ev, ...prev]);
-      });
-    }
+    // El token se pide en cada intento de conexión: el socket reconecta con la sesión renovada.
+    socket = io(`${API_ORIGIN}/com`, {
+      auth: (cb: (d: object) => void) => { api.freshAccessToken().then((token) => cb({ token })).catch(() => cb({})); },
+      transports: ['websocket'],
+    });
+    socket.on('panic.alert', (ev: any) => {
+      setAlerts((prev) => [ev.data ?? ev, ...prev]);
+    });
     return () => {
       socket?.disconnect();
     };
@@ -68,9 +71,11 @@ export default function ComAlerts() {
               {a.driver_first_name} {a.driver_last_name} · {a.vehicle_plate}
             </div>
             <div className="text-[13px] text-[#0A3A3C]">Viaje {a.trip_public_code ?? a.id.slice(0, 8)}</div>
-            <div className="mt-2 flex gap-2">
-              <button onClick={() => ack(a.id)} className="btn h-9 bg-[#B3261E] text-[13px]">Atender</button>
-            </div>
+            {can('com.alerts.act') && (
+              <div className="mt-2 flex gap-2">
+                <button onClick={() => ack(a.id)} className="btn h-9 bg-[#B3261E] text-[13px]">Atender</button>
+              </div>
+            )}
           </div>
         ))}
       </div>

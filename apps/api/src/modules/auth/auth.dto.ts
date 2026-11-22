@@ -28,6 +28,20 @@ export class RefreshDto {
   @ApiProperty() @IsString() @Length(20, 200) refreshToken!: string;
 }
 
+export class OperatorMfaDto {
+  @ApiProperty() @IsString() @Length(20, 2048) mfaToken!: string;
+  @ApiProperty({ description: 'Código de 6 dígitos de la app o código de recuperación xxxx-xxxx' }) @IsString() @Length(6, 9) code!: string;
+}
+
+export class ChangePasswordDto {
+  @ApiProperty() @IsString() @Length(1, 128) currentPassword!: string;
+  @ApiProperty() @IsString() @Length(12, 128) newPassword!: string;
+}
+
+export class MfaCodeDto {
+  @ApiProperty() @IsString() @Length(6, 9) code!: string;
+}
+
 export class IssueQrDto {
   @ApiProperty({ example: 'Parada Av. Chiozza y Costanera' }) @IsString() @Length(3, 120) label!: string;
   @ApiPropertyOptional({ example: 'SB_PARADA_COSTANERA' }) @IsOptional() @IsString() @MaxLength(40) zoneCode?: string;
