@@ -1,5 +1,6 @@
 {
   "expo": {
+    "newArchEnabled": true,
     "name": "LaCostaViaja Chofer",
     "slug": "lacosta-driver",
     "version": "0.1.0",

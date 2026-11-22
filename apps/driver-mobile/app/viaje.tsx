@@ -57,7 +57,7 @@ export default function Viaje() {
     if (!tripId) return;
     setLoading(true);
     try {
-      const clientEventId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });
+      const clientEventId = Date.now().toString(16) + '-' + Math.random().toString(16).slice(2);
       await apiFetch('/panic', { method: 'POST', body: JSON.stringify({ clientEventId, tripId, raisedBy: 'DRIVER', driverId: null, location: { lat: -36.6875, lng: -56.68 }, channel: 'APP', snapshot: { tripId }, occurredAt: new Date().toISOString() }) });
       Alert.alert('Alerta enviada', 'El COM fue notificado.');
     } catch (e: any) { Alert.alert('Error', e.message); } finally { setLoading(false); }
