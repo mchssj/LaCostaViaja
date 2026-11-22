@@ -5,6 +5,7 @@ import { DomainExceptionFilter } from './common/domain-exception.filter';
 export function configureApp<T extends INestApplication>(app: T): T {
   app.setGlobalPrefix('api');
   app.enableVersioning({ type: VersioningType.URI });
+  app.enableCors({ origin: true, credentials: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
   app.useGlobalFilters(new DomainExceptionFilter());
   return app;

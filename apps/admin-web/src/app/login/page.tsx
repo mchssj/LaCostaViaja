@@ -42,7 +42,7 @@ export default function LoginPage() {
           {loading ? 'Ingresando…' : 'Ingresar'}
         </button>
         <p className="text-[12px] text-[#34454D]">
-          Demo: usuario <b>com_operador</b>, contraseña placeholder (el hash se valida contra la base).
+          Demo: usuario <b>com_operador</b>, contraseña <b>demo</b>. PIN de choferes demo: <b>123456</b>.
         </p>
       </form>
     </div>
