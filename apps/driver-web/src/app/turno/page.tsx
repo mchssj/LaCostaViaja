@@ -22,6 +22,8 @@ export default function TurnoPage() {
     setError(null);
     try {
       await apiFetch('/drivers/me/shift', { method: 'POST', body: JSON.stringify({ vehicleId }) });
+      // Reportar posición inicial para entrar al índice de despacho.
+      await apiFetch('/drivers/me/positions', { method: 'POST', body: JSON.stringify({ pings: [{ lat: -36.6875, lng: -56.68, recordedAt: Date.now(), accuracyM: 8 }] }) });
       setOnShift(true);
     } catch (e: any) { setError(e.message); } finally { setLoading(false); }
   }
