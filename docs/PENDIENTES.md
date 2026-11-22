@@ -1,6 +1,6 @@
 # Pendientes
 
-Todo lo que se planteó o se empezó y todavía no está terminado o desplegado. Actualizado el **2026-11-21**.
+Todo lo que se planteó o se empezó y todavía no está terminado o desplegado. Actualizado el **2026-11-22**.
 
 ## Fase 5 (base de datos): documentos de habilitación y auditoría (2026-11-21): implementada y probada
 - Tablas `habilitation_documents` y `audit_log`, más `verified_by`/`verified_at` en drivers/vehicles/agencies.
@@ -11,7 +11,6 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
 
 - **Estado:** todas las pruebas pasan contra PostGIS 3.4 en Docker (dominio, API, SQL e integración). Detalle: [`2026-11-20-fase-1-monorepo-postgis-tarifas`](bitacora/2026-11-20-fase-1-monorepo-postgis-tarifas/).
 - **Falta:**
-  - Inicializar el repositorio git y hacer el primer commit (cuando se pida).
   - **Datos oficiales del municipio**, para reemplazar lo aproximado:
     - Polígonos de las 14 localidades y eje de la RP11 (Catastro municipal / ARBA / IGN).
     - Lista de localidades confirmada (se corrigieron General Lavalle, San Francisco Solano y Villa Robles).
@@ -25,11 +24,6 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
 
 - **Estado:** implementada según el plan. Pasan 14 tests de integración contra Redis y PostGIS reales (incluida la concurrencia) y la simulación de temporada: 200/200 viajes asignados, p95 de 2,46 s y 0 dobles asignaciones. Detalle: [`2026-11-20-fase-2-redis-gps-despacho`](bitacora/2026-11-20-fase-2-redis-gps-despacho/).
 - **Falta:**
-  - **Fase 3:** exponer los servicios.
-    - Endpoints de turno, posiciones, aceptar y rechazar.
-    - Eventos WebSocket a partir de `DispatchEvents`, con Redis Pub/Sub entre réplicas.
-    - Autenticación de choferes.
-    - Cierre del viaje en la base (`COMPLETED`) junto con `releaseAfterTrip`.
   - Definir con el municipio:
     - Plazo de conservación del recorrido GPS (`trip_track_points`).
     - Los pesos del ranking (Viaje de Vuelta, cola, penalización por rechazo).
@@ -43,14 +37,30 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
     - Prueba de carga real.
   - No correr `pnpm build` con la preview de la API abierta: borra `dist/` y la preview se cae (hay que reiniciarla).
 
-## Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM (2026-11-20): aprobada; base de datos implementada y probada (2026-11-21); API implementada (auth, trips, drivers, panic, vouchers, payments, gateways /driver /passenger /com, adaptador Redis, OpenAPI en /api/docs) — faltan tests end-to-end y idempotencia HTTP formal
+## Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM (2026-11-22): rehecha y probada en local, sin commit ni despliegue
 
-- **Estado:** plan escrito, sin implementar. Detalle: [`2026-11-20-fase-3-api-websockets-pagos-com`](bitacora/2026-11-20-fase-3-api-websockets-pagos-com/PLAN.md).
+- **Estado:** base de datos de kyan (2026-11-21) y capa de API rehecha el 2026-11-22 después de la revisión (permisos, pagos, vouchers, pánico, chofer trabado). Pasan 15 E2E con dos réplicas, Socket.IO, Redis y PostGIS reales, más todas las suites anteriores. Detalle: [`2026-11-20-fase-3-api-websockets-pagos-com`](bitacora/2026-11-20-fase-3-api-websockets-pagos-com/).
 - **Falta:**
-  - Aprobar el plan, o pedir cambios.
-  - Para probar Mercado Pago contra el sandbox: credenciales de prueba en el `.env`, que las carga el usuario.
-  - Que el municipio defina:
-    - Cargo por cancelación.
-    - Espera por "no se presentó".
-    - Plazo de escalamiento de alertas.
-    - Proveedor de SMS.
+  - **Commit:** hacerlo en una rama propia cuando se pida. En el árbol de trabajo también hay trabajo sin commit de kyan (`passenger-mobile/app`, `lib`, `mockup/`, `localities.controller.ts`), que no se tocó salvo `@Public()` en `localities.controller.ts`.
+  - **Mercado Pago:**
+    - Probar contra el sandbox real: credenciales de prueba en el `.env` (`PAYMENTS_PROVIDER=mercadopago`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`), que carga el responsable de la cuenta.
+    - **Split marketplace** a agencias y choferes: no implementado. Requiere la autorización OAuth de cada vendedor y una cuenta habilitada.
+  - **Proveedores reales** (hoy solo el de log, de desarrollo): SMS para el código de pasajeros y canal de escalamiento de alertas (SMS o llamada a guardia).
+  - **Definir con el municipio:**
+    - Cargo por cancelación (hoy 0).
+    - Espera por "no se presentó" (5 min).
+    - Plazo de escalamiento (60 s).
+    - Plazos de conservación de alertas, snapshots, eventos y recorrido.
+  - ~~**Entorno local:** Windows bloqueaba el puerto 56379 del Redis.~~ Resuelto el 2026-11-22: Redis pasó al **56390** (`docker-compose.yml`, `.env.example`, `.env`).
+  - **Prototipos:** `driver-web` y la PWA usan `test-qr` / `demo-qr` para entrar como invitado, así que solo funcionan con `ALLOW_UNSIGNED_QR=true` (desarrollo). Para producción hay que imprimir QR firmados (`POST /auth/guest-qr-codes`).
+  - **`passenger-mobile`:** no pasa el typecheck. Es trabajo sin commit de kyan (falta `@react-native-async-storage/async-storage` y la config de módulos).
+  - **Decidir con el usuario:**
+    - Si `driver-web` (Next.js) reemplaza a `driver-mobile` (Expo) o es solo un prototipo.
+    - Si el Modo Invitado (`guest-pwa`) queda como app aparte o como la versión web de `passenger-mobile`.
+
+## Fases 4 y 5: prototipos de kyan sin plan (2026-11-21/22)
+
+- **Estado:** hay prototipos funcionales de `admin-web` (Leaflet, consola COM), `guest-pwa` (QR con cámara), `driver-web` y apps Expo, pero no tienen `PLAN.md` en la bitácora. Antes de seguir con esas fases, escribir sus planes según la convención y usar los prototipos como base.
+- **Panel, tablas legibles (2026-11-22):** hecho en Tarifas, Flota y Vouchers ([`2026-11-22-panel-tablas-legibles`](bitacora/2026-11-22-panel-tablas-legibles/)). Falta:
+  - Ver las tablas de Vouchers con datos y probar el alta de programas y vouchers (los formularios ya piden pesos desde el 2026-11-22) con un usuario administrador municipal.
+  - Que el panel renueve el token: el acceso vence a los 15 minutos y hoy obliga a volver a ingresar.

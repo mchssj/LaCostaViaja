@@ -32,15 +32,17 @@ Requisitos: Node ≥ 22.12 (probado con 24), pnpm, Docker Desktop.
 ```powershell
 Copy-Item .env.example .env
 pnpm install --frozen-lockfile
-pnpm infra:up          # PostGIS en :55432, Redis en :56379
+pnpm infra:up          # PostGIS en :55432, Redis en :56390
 pnpm db:migrate        # esquema
 pnpm db:seed           # 14 localidades, corredor RP11, cuadro tarifario 2026/27, flota demo
 pnpm db:test           # smoke tests SQL (en transacción revertida)
 pnpm test              # tests unitarios + HTTP (sin base)
 pnpm test:int          # integración contra PostGIS y Redis (TEST_DATABASE_URL, TEST_REDIS_URL)
 pnpm --filter @lacosta/api test:sim   # simulación de temporada alta (≈1 min)
-pnpm dev:api           # http://localhost:3000/api
+pnpm dev:api           # http://localhost:3000/api · documentación OpenAPI en /api/docs
 ```
+
+La API exige `JWT_SECRET` y `QR_SECRET` (≥ 32 caracteres) en el `.env`: ver `.env.example`.
 
 Cotizar un viaje (San Bernardo · Av. Chiozza → Mar de Ajó centro):
 
@@ -54,9 +56,9 @@ Invoke-RestMethod -Method Post http://localhost:3000/api/v1/fares/quote -Content
 |---|---|---|
 | 1 | Monorepo, esquema PostGIS + seeds, `FareCalculatorService` | ✔ |
 | 2 | Redis GPS en vivo, colas de despacho por corredor/parada, lock atómico, prioridad de Viaje de Vuelta | ✔ |
-| 3 | API REST + WebSockets del ciclo de vida del viaje, pagos (efectivo / Mercado Pago / vouchers), alertas COM | — |
-| 4 | App del chofer (Android) y PWA Modo Invitado por QR | — |
-| 5 | Panel municipal: habilitaciones, editor tarifario, mapa de calor, consola COM | — |
+| 3 | API REST + WebSockets del ciclo de vida del viaje, pagos (efectivo / Mercado Pago / vouchers), alertas COM | ✔ (documentación en `/api/docs`) |
+| 4 | App del chofer (Android) y PWA Modo Invitado por QR | Prototipos sin plan |
+| 5 | Panel municipal: habilitaciones, editor tarifario, mapa de calor, consola COM | Prototipo sin plan |
 | 6 | Pruebas de carga invierno/verano, resiliencia, despliegue y auto-escalado | — |
 
 El detalle de cada fase (plan, documentación, guía de implementación y pruebas) está en la

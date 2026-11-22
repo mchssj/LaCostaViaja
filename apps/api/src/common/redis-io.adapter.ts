@@ -1,25 +1,48 @@
+import type { INestApplicationContext } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
-import { Redis } from 'ioredis';
-import type { INestApplication } from '@nestjs/common';
+import type Redis from 'ioredis';
+import { REDIS } from '../redis/redis.tokens';
 
+type IoServer = ReturnType<IoAdapter['createIOServer']>;
+
+/**
+ * Socket.IO con adaptador de Redis: un mensaje emitido en cualquier réplica de la API llega a los
+ * clientes conectados a cualquier otra (necesario con auto-escalado en temporada).
+ */
 export class RedisIoAdapter extends IoAdapter {
-  private adapterConstructor: ReturnType<typeof createAdapter> | null = null;
+  private adapterFactory: ReturnType<typeof createAdapter> | null = null;
+  private clients: Redis[] = [];
 
-  constructor(app: INestApplication) {
-    super(app);
+  constructor(private readonly appContext: INestApplicationContext) {
+    super(appContext);
   }
 
   async connectToRedis(): Promise<void> {
-    const url = process.env['REDIS_URL'] ?? 'redis://localhost:6379';
-    const pubClient = new Redis(url);
-    const subClient = pubClient.duplicate();
-    this.adapterConstructor = createAdapter(pubClient, subClient);
+    const base = this.appContext.get<Redis>(REDIS);
+    const pub = base.duplicate();
+    const sub = base.duplicate();
+    for (const c of [pub, sub]) c.on('error', () => undefined); // el cliente principal ya informa los errores
+    await Promise.all([pub.connect(), sub.connect()]);
+    this.clients = [pub, sub];
+    this.adapterFactory = createAdapter(pub, sub);
   }
 
-  override createIOServer(port: number, options?: any): any {
-    const server = super.createIOServer(port, options);
-    if (this.adapterConstructor) server.adapter(this.adapterConstructor);
+  override createIOServer(port: number, options?: Parameters<IoAdapter['createIOServer']>[1]): IoServer {
+    const server = super.createIOServer(port, options) as IoServer;
+    if (this.adapterFactory) (server as unknown as { adapter(f: unknown): void }).adapter(this.adapterFactory);
     return server;
+  }
+
+  override async close(server: Parameters<IoAdapter['close']>[0]): Promise<void> {
+    await super.close(server);
+    // quit() (no disconnect()): espera las respuestas pendientes, p. ej. los UNSUBSCRIBE que manda el
+    // adaptador al cerrar; cortar de golpe deja esos comandos rechazados con "Connection is closed".
+    const clients = this.clients;
+    this.clients = [];
+    // El adaptador manda sus UNSUBSCRIBE de forma asíncrona después de server.close(): se le da un
+    // momento para que salgan antes del QUIT.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await Promise.all(clients.map((c) => c.quit().catch(() => c.disconnect())));
   }
 }

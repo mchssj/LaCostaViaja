@@ -12,6 +12,13 @@ const STATUS_BY_CODE: Record<DomainErrorCode, HttpStatus> = {
   DRIVER_NOT_ON_SHIFT: HttpStatus.CONFLICT,
   DISPATCH_CONFLICT: HttpStatus.CONFLICT,
   SERVICE_DEGRADED: HttpStatus.SERVICE_UNAVAILABLE,
+  UNAUTHORIZED: HttpStatus.UNAUTHORIZED,
+  FORBIDDEN: HttpStatus.FORBIDDEN,
+  INVALID_TRANSITION: HttpStatus.CONFLICT,
+  IDEMPOTENCY_CONFLICT: HttpStatus.CONFLICT,
+  RATE_LIMITED: HttpStatus.TOO_MANY_REQUESTS,
+  PAYMENT_ERROR: HttpStatus.BAD_GATEWAY,
+  VOUCHER_REJECTED: HttpStatus.UNPROCESSABLE_ENTITY,
 };
 
 /** Traduce errores de dominio a HTTP con un cuerpo estable { error, message, details }. */

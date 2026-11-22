@@ -194,6 +194,10 @@ export class InMemoryTariffRepository implements ITariffRepository {
   async findRule(key: TariffRuleKey): Promise<TariffRule | null> {
     return this.rules.find((r) => tariffRuleKey(r) === tariffRuleKey(key)) ?? null;
   }
+
+  async findRuleById(ruleId: string): Promise<TariffRule | null> {
+    return this.rules.find((r) => r.id === ruleId) ?? null;
+  }
 }
 
 export class FakeRoutingProvider implements IRoutingProvider {

@@ -96,6 +96,13 @@ export class PostgresTariffRepository implements ITariffRepository {
     return byKey.get(tariffRuleKey(key)) ?? null;
   }
 
+  async findRuleById(ruleId: string): Promise<TariffRule | null> {
+    const { rows } = await this.pool.query<{ schedule_id: string }>(`SELECT schedule_id FROM tariff_rules WHERE id = $1`, [ruleId]);
+    if (!rows[0]) return null;
+    const byKey = await this.rules.getOrLoad(rows[0].schedule_id, () => this.loadRules(rows[0]!.schedule_id));
+    return [...byKey.values()].find((r) => r.id === ruleId) ?? null;
+  }
+
   private async loadSchedules(): Promise<readonly ScheduleWindow[]> {
     const { rows } = await this.pool.query<ScheduleRow>(
       `SELECT id, code, legal_instrument, timezone,

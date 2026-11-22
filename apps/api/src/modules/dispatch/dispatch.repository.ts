@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { BackhaulMatch, FareQuote, GeoPoint, ScoreBreakdown, ServiceType, TripScope, TripStatus } from '@lacosta/domain';
-import type { Pool } from 'pg';
+import type { Pool, PoolClient } from 'pg';
 import { PG_POOL } from '../../database/database.module';
+import { TripEventsRepository, type TripEvent } from '../trip-events/trip-events.repository';
 
 export interface DispatchTrip {
   readonly id: string;
@@ -95,25 +96,52 @@ const toTrip = (r: TripRow): DispatchTrip => ({
 /** Persistencia del despacho en PostgreSQL: estado del viaje y auditoría de ofertas. */
 @Injectable()
 export class DispatchRepository {
-  constructor(@Inject(PG_POOL) private readonly pool: Pool) {}
+  constructor(
+    @Inject(PG_POOL) private readonly pool: Pool,
+    private readonly tripEvents: TripEventsRepository,
+  ) {}
 
   async loadTrip(tripId: string): Promise<DispatchTrip | null> {
     const { rows } = await this.pool.query<TripRow>(`SELECT ${TRIP_COLUMNS} FROM trips WHERE id = $1`, [tripId]);
     return rows[0] ? toTrip(rows[0]) : null;
   }
 
-  /** REQUESTED → SEARCHING (idempotente). */
-  async startSearching(tripId: string): Promise<DispatchTrip | null> {
-    const { rows } = await this.pool.query<TripRow>(
-      `UPDATE trips
-       SET status = 'SEARCHING',
-           dispatch_round = GREATEST(dispatch_round, 1),
-           dispatch_started_at = COALESCE(dispatch_started_at, now())
-       WHERE id = $1 AND status IN ('REQUESTED', 'SEARCHING')
-       RETURNING ${TRIP_COLUMNS}`,
-      [tripId],
-    );
-    return rows[0] ? toTrip(rows[0]) : null;
+  /** REQUESTED → SEARCHING (idempotente). Registra SEARCH_STARTED solo en la primera transición. */
+  async startSearching(tripId: string): Promise<{ trip: DispatchTrip; event: TripEvent | null } | null> {
+    return this.inTransaction(async (client) => {
+      const { rows: current } = await client.query<{ status: string }>(`SELECT status FROM trips WHERE id = $1 FOR UPDATE`, [tripId]);
+      const previous = current[0]?.status;
+      if (previous !== 'REQUESTED' && previous !== 'SEARCHING') return null;
+      const { rows } = await client.query<TripRow>(
+        `UPDATE trips
+         SET status = 'SEARCHING',
+             dispatch_round = GREATEST(dispatch_round, 1),
+             dispatch_started_at = COALESCE(dispatch_started_at, now())
+         WHERE id = $1
+         RETURNING ${TRIP_COLUMNS}`,
+        [tripId],
+      );
+      const event =
+        previous === 'REQUESTED'
+          ? await this.tripEvents.insert(client, { tripId, type: 'SEARCH_STARTED', actorRole: 'SYSTEM', actorId: null, data: { status: 'SEARCHING' } })
+          : null;
+      return { trip: toTrip(rows[0]!), event };
+    });
+  }
+
+  private async inTransaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await fn(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (err) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 
   async setRound(tripId: string, round: number): Promise<void> {
@@ -123,18 +151,36 @@ export class DispatchRepository {
     ]);
   }
 
-  async markNoDriver(tripId: string): Promise<boolean> {
-    const r = await this.pool.query(`UPDATE trips SET status = 'NO_DRIVER_AVAILABLE' WHERE id = $1 AND status = 'SEARCHING'`, [tripId]);
-    return r.rowCount === 1;
+  async markNoDriver(tripId: string): Promise<TripEvent | null> {
+    return this.inTransaction(async (client) => {
+      const r = await client.query(`UPDATE trips SET status = 'NO_DRIVER_AVAILABLE' WHERE id = $1 AND status = 'SEARCHING'`, [tripId]);
+      if (r.rowCount !== 1) return null;
+      return this.tripEvents.insert(client, {
+        tripId,
+        type: 'NO_DRIVER_AVAILABLE',
+        actorRole: 'SYSTEM',
+        actorId: null,
+        data: { status: 'NO_DRIVER_AVAILABLE' },
+      });
+    });
   }
 
-  async cancelSearching(tripId: string, reason: string): Promise<boolean> {
-    const r = await this.pool.query(
-      `UPDATE trips SET status = 'CANCELLED_BY_PASSENGER', cancelled_at = now(), cancellation_reason = $2
-       WHERE id = $1 AND status IN ('REQUESTED', 'SEARCHING')`,
-      [tripId, reason],
-    );
-    return r.rowCount === 1;
+  async cancelSearching(tripId: string, reason: string): Promise<TripEvent | null> {
+    return this.inTransaction(async (client) => {
+      const r = await client.query(
+        `UPDATE trips SET status = 'CANCELLED_BY_PASSENGER', cancelled_at = now(), cancellation_reason = $2
+         WHERE id = $1 AND status IN ('REQUESTED', 'SEARCHING')`,
+        [tripId, reason],
+      );
+      if (r.rowCount !== 1) return null;
+      return this.tripEvents.insert(client, {
+        tripId,
+        type: 'CANCELLED_BY_PASSENGER',
+        actorRole: 'PASSENGER',
+        actorId: null,
+        data: { status: 'CANCELLED_BY_PASSENGER', reason },
+      });
+    });
   }
 
   async offerHistory(tripId: string): Promise<{ offeredDriverIds: Set<string>; countByRound: Map<number, number> }> {
@@ -182,7 +228,7 @@ export class DispatchRepository {
    * Confirmación definitiva en PostgreSQL (después del lock de Redis). Si el viaje ya no está en búsqueda
    * o el trigger de habilitación lo rechaza, no cambia nada y devuelve false / lanza.
    */
-  async assign(p: AssignParams): Promise<boolean> {
+  async assign(p: AssignParams): Promise<TripEvent | null> {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
@@ -206,11 +252,24 @@ export class DispatchRepository {
       );
       if (updated.rowCount !== 1) {
         await client.query('ROLLBACK');
-        return false;
+        return null;
       }
       await client.query(`UPDATE trip_offers SET outcome = 'ACCEPTED', responded_at = now() WHERE id = $1`, [p.offerId]);
+      const event = await this.tripEvents.insert(client, {
+        tripId: p.tripId,
+        type: 'DRIVER_ASSIGNED',
+        actorRole: 'DRIVER',
+        actorId: p.driverId,
+        data: {
+          status: 'ASSIGNED',
+          driverId: p.driverId,
+          vehicleId: p.vehicleId,
+          isBackhaul: p.isBackhaul,
+          repricedFareCents: p.repriced?.totalCents ?? null,
+        },
+      });
       await client.query('COMMIT');
-      return true;
+      return event;
     } catch (err) {
       await client.query('ROLLBACK').catch(() => undefined);
       throw err;

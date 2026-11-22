@@ -56,6 +56,34 @@ export interface AppConfig {
     readonly batchSize: number;
     readonly streamMaxLen: number;
   };
+  readonly security: {
+    /** Firma de JWT y (derivada) de cotizaciones. Obligatorio, ≥ 32 caracteres. */
+    readonly jwtSecret: string;
+    /** Firma de los QR impresos del Modo Invitado. Separado del JWT: rotar uno no invalida los QR. */
+    readonly qrSecret: string;
+    /** Solo desarrollo: acepta códigos QR sin firma. */
+    readonly allowUnsignedQr: boolean;
+    readonly accessTokenTtlSeconds: number;
+    readonly refreshTokenTtlDays: number;
+  };
+  readonly trips: {
+    /** Espera mínima del chofer en la puerta antes de cerrar por "no se presentó". */
+    readonly noShowWaitMs: number;
+    /** Cada cuánto se reenvía la ubicación del chofer al pasajero. */
+    readonly driverLocationThrottleMs: number;
+  };
+  readonly payments: {
+    readonly provider: 'fake' | 'mercadopago';
+    readonly mpAccessToken: string | null;
+    readonly mpWebhookSecret: string | null;
+    /** URL pública de la API (Mercado Pago llama al webhook acá). */
+    readonly publicBaseUrl: string;
+  };
+  readonly panic: {
+    /** Si nadie atiende la alerta en este tiempo, se escala. */
+    readonly escalateAfterMs: number;
+    readonly escalationTickMs: number;
+  };
 }
 
 /** Carga .env (cwd o raíz del monorepo) sin pisar variables ya definidas en el entorno. */
@@ -93,7 +121,23 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     return fallback;
   };
 
-  const redisUrl = env['REDIS_URL'] ?? 'redis://localhost:56379';
+  // Secretos obligatorios: sin valor por defecto. Un default conocido permitiría falsificar tokens.
+  const secret = (key: string): string => {
+    const value = env[key] ?? '';
+    if (value.length < 32) errors.push(`${key} es obligatorio y debe tener al menos 32 caracteres`);
+    return value;
+  };
+
+  const paymentsProviderRaw = env['PAYMENTS_PROVIDER'] ?? 'fake';
+  const paymentsProvider = paymentsProviderRaw === 'mercadopago' ? 'mercadopago' : 'fake';
+  if (paymentsProviderRaw !== 'fake' && paymentsProviderRaw !== 'mercadopago') {
+    errors.push(`PAYMENTS_PROVIDER=${paymentsProviderRaw} inválido (fake | mercadopago)`);
+  }
+  if (paymentsProvider === 'mercadopago' && (!env['MP_ACCESS_TOKEN'] || !env['MP_WEBHOOK_SECRET'])) {
+    errors.push('PAYMENTS_PROVIDER=mercadopago requiere MP_ACCESS_TOKEN y MP_WEBHOOK_SECRET');
+  }
+
+  const redisUrl = env['REDIS_URL'] ?? 'redis://localhost:56390';
   if (!/^rediss?:\/\//.test(redisUrl)) errors.push('REDIS_URL debe ser una URL redis://');
 
   const databaseUrl = env['DATABASE_URL'] ?? '';
@@ -151,6 +195,27 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     tracking: {
       batchSize: num('TRACKING_BATCH_SIZE', 500, 1, 10_000),
       streamMaxLen: num('TRACKING_STREAM_MAXLEN', 200_000, 1_000, 10_000_000),
+    },
+    security: {
+      jwtSecret: secret('JWT_SECRET'),
+      qrSecret: secret('QR_SECRET'),
+      allowUnsignedQr: bool('ALLOW_UNSIGNED_QR', false),
+      accessTokenTtlSeconds: num('ACCESS_TOKEN_TTL_SECONDS', 900, 60, 86_400),
+      refreshTokenTtlDays: num('REFRESH_TOKEN_TTL_DAYS', 30, 1, 365),
+    },
+    trips: {
+      noShowWaitMs: num('TRIP_NO_SHOW_WAIT_MS', 5 * 60_000, 0, 3_600_000),
+      driverLocationThrottleMs: num('TRIP_DRIVER_LOCATION_THROTTLE_MS', 5_000, 0, 600_000),
+    },
+    payments: {
+      provider: paymentsProvider,
+      mpAccessToken: env['MP_ACCESS_TOKEN'] || null,
+      mpWebhookSecret: env['MP_WEBHOOK_SECRET'] || null,
+      publicBaseUrl: (env['PUBLIC_BASE_URL'] || 'http://localhost:3000').replace(/\/+$/, ''),
+    },
+    panic: {
+      escalateAfterMs: num('PANIC_ESCALATE_AFTER_MS', 60_000, 1_000, 3_600_000),
+      escalationTickMs: num('PANIC_ESCALATION_TICK_MS', 10_000, 500, 600_000),
     },
   };
 

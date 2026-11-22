@@ -3,6 +3,7 @@ import type Redis from 'ioredis';
 import type { Pool } from 'pg';
 import { PG_POOL } from '../../database/database.module';
 import { REDIS } from '../../redis/redis.tokens';
+import { Public } from '../../security/principal';
 import { GeoIndexService } from '../presence/geo-index.service';
 
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
@@ -24,6 +25,7 @@ export interface HealthReport {
   time: string;
 }
 
+@Public()
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {
   constructor(

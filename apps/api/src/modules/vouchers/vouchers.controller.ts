@@ -1,33 +1,65 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query, VERSION_NEUTRAL } from '@nestjs/common';
+import { ApiBearerAuth, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { IsDateString, IsIn, IsInt, IsOptional, IsString, IsUUID, Length, Matches, Max, Min } from 'class-validator';
+import { Allow } from '../../security/principal';
 import { VouchersService } from './vouchers.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@Controller()
-@UseGuards(JwtAuthGuard)
+class CreateProgramDto {
+  @ApiProperty() @IsString() @Length(3, 120) name!: string;
+  @ApiProperty({ enum: ['HEALTH', 'DISABILITY', 'EMPLOYEE', 'OTHER'] }) @IsIn(['HEALTH', 'DISABILITY', 'EMPLOYEE', 'OTHER']) programType!: string;
+  @ApiProperty({ example: '2026-11-01' }) @IsDateString() periodStart!: string;
+  @ApiProperty({ example: '2027-10-31' }) @IsDateString() periodEnd!: string;
+  @ApiProperty({ description: 'Presupuesto del período en centavos' }) @IsInt() @Min(0) @Max(2_000_000_000) budgetCents!: number;
+}
+
+class CreateVoucherDto {
+  @ApiPropertyOptional({ description: 'Si no se envía (o viene vacío), se genera (LCV-XXXX-XXXX)' })
+  @Transform(({ value }: { value: unknown }) => (typeof value === 'string' && value.trim() === '' ? undefined : value))
+  @IsOptional()
+  @Matches(/^[A-Z0-9-]{6,32}$/)
+  code?: string;
+  @ApiProperty() @IsUUID() programId!: string;
+  @ApiProperty() @IsInt() @Min(1) @Max(100_000_000) initialBalanceCents!: number;
+  @ApiProperty() @IsDateString() validFrom!: string;
+  @ApiProperty() @IsDateString() validUntil!: string;
+  @ApiPropertyOptional({ description: 'Se guarda solo un HMAC del DNI' }) @IsOptional() @Matches(/^[0-9]{7,9}$/) beneficiaryDni?: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() beneficiaryPassengerId?: string;
+}
+
+/**
+ * Administración de programas y vouchers: solo la administración municipal.
+ * El saldo NO se mueve por endpoints: lo maneja el ciclo del viaje (reserva / consumo / liberación).
+ */
+@ApiTags('vouchers')
+@ApiBearerAuth()
+@Allow('MUNICIPAL_ADMIN')
+@Controller({ version: ['1', VERSION_NEUTRAL] })
 export class VouchersController {
-  constructor(private readonly v: VouchersService) {}
+  constructor(private readonly vouchers: VouchersService) {}
 
   @Post('municipal-programs')
-  createProgram(@Body() body: any) { return this.v.createProgram(body); }
+  createProgram(@Body() body: CreateProgramDto) {
+    return this.vouchers.createProgram(body);
+  }
 
   @Get('municipal-programs')
-  listPrograms() { return this.v.listPrograms(); }
+  listPrograms() {
+    return this.vouchers.listPrograms();
+  }
 
   @Post('vouchers')
-  createVoucher(@Body() body: any) { return this.v.createVoucher(body); }
+  createVoucher(@Body() body: CreateVoucherDto) {
+    return this.vouchers.createVoucher(body);
+  }
 
   @Get('vouchers')
-  listVouchers() { return this.v.listVouchers(); }
+  listVouchers(@Query('programId') programId?: string) {
+    return this.vouchers.listVouchers(programId);
+  }
 
   @Get('vouchers/:id')
-  getVoucher(@Param('id') id: string) { return this.v.getVoucher(id); }
-
-  @Post('vouchers/:id/reserve')
-  reserve(@Param('id') id: string, @Body() body: any) { return this.v.reserve(id, body.tripId, body.amountCents); }
-
-  @Post('vouchers/:id/consume')
-  consume(@Param('id') id: string, @Body() body: any) { return this.v.consume(id, body.tripId, body.amountCents); }
-
-  @Post('vouchers/:id/release')
-  release(@Param('id') id: string, @Body() body: any) { return this.v.release(id, body.tripId, body.amountCents); }
+  getVoucher(@Param('id', ParseUUIDPipe) id: string) {
+    return this.vouchers.getVoucher(id);
+  }
 }

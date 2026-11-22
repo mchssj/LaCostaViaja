@@ -10,3 +10,5 @@ export * from './quote';
 export * from './geo-index';
 export * from './presence';
 export * from './dispatch-ranking';
+export * from './trip-lifecycle';
+export * from './track-summary';

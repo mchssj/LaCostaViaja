@@ -1,21 +1,33 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Allow, CurrentPrincipal, OPERATORS, type Principal } from '../../security/principal';
 import { FleetService } from './fleet.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@Controller()
-@UseGuards(JwtAuthGuard)
+/** Flota habilitada: solo operadores (COM, municipio, agencia con su propio alcance). */
+@ApiTags('flota')
+@ApiBearerAuth()
+@Allow(...OPERATORS)
+@Controller({ version: ['1', VERSION_NEUTRAL] })
 export class FleetController {
   constructor(private readonly fleet: FleetService) {}
 
   @Get('agencies')
-  agencies() { return this.fleet.listAgencies(); }
+  agencies(@CurrentPrincipal() p: Principal) {
+    return this.fleet.listAgencies(p);
+  }
 
   @Get('drivers')
-  drivers() { return this.fleet.listDrivers(); }
+  drivers(@CurrentPrincipal() p: Principal) {
+    return this.fleet.listDrivers(p);
+  }
 
   @Get('vehicles')
-  vehicles() { return this.fleet.listVehicles(); }
+  vehicles(@CurrentPrincipal() p: Principal) {
+    return this.fleet.listVehicles(p);
+  }
 
   @Get('driver-vehicle-eligibility')
-  eligibility() { return this.fleet.listEligibility(); }
+  eligibility(@CurrentPrincipal() p: Principal) {
+    return this.fleet.listEligibility(p);
+  }
 }

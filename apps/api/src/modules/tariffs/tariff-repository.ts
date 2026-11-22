@@ -8,4 +8,6 @@ export interface ITariffRepository {
   /** Períodos de temporada que cubren la fecha local 'YYYY-MM-DD'. */
   findSeasonPeriodsOn(localIsoDate: string): Promise<readonly SeasonPeriod[]>;
   findRule(key: TariffRuleKey): Promise<TariffRule | null>;
+  /** Regla aplicada a un viaje (para el taxímetro de referencia al terminar). */
+  findRuleById(ruleId: string): Promise<TariffRule | null>;
 }

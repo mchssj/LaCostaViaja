@@ -6,4 +6,5 @@ module.exports = {
   testMatch: ['**/*.spec.ts'],
   transform: { '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }] },
   moduleNameMapper: { '^@lacosta/domain$': '<rootDir>/../../packages/domain/src/index.ts' },
+  setupFiles: ['<rootDir>/test/setup-env.ts'],
 };

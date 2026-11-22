@@ -97,12 +97,13 @@ export class DispatchService {
 
   /** Pone el viaje en búsqueda y hace la primera oferta. Lo llama la creación del viaje (Fase 3). */
   async startDispatch(tripId: string): Promise<AdvanceOutcome> {
-    const trip = await this.repo.startSearching(tripId);
-    if (!trip) {
+    const started = await this.repo.startSearching(tripId);
+    if (!started) {
       const current = await this.repo.loadTrip(tripId);
       if (!current) throw new NotFoundError('Viaje inexistente', { tripId });
       return { kind: 'NOT_SEARCHING', status: current.status };
     }
+    if (started.event) this.events.emit('trip.event', { event: started.event, driverIds: [] });
     return this.advance(tripId);
   }
 
@@ -332,8 +333,8 @@ export class DispatchService {
       const ctx = this.tripContext(trip);
       const match = backhaulMatch(this.backhaulOf(before), { destinationLocalityId: trip.destinationLocalityId, direction: ctx.direction });
       const repriced = match === 'HOME' && trip.scope === 'INTERURBAN' ? await this.reprice(trip, before.baseLocalityId) : null;
-      const ok = await this.repo.assign({ tripId, driverId, vehicleId: before.vehicleId, offerId, isBackhaul: match !== null, repriced });
-      if (!ok) {
+      const assignedEvent = await this.repo.assign({ tripId, driverId, vehicleId: before.vehicleId, offerId, isBackhaul: match !== null, repriced });
+      if (!assignedEvent) {
         const t = await this.repo.loadTrip(tripId);
         if (t?.status.startsWith('CANCELLED')) throw new DispatchConflictError('TRIP_CANCELLED', 'El pasajero canceló el viaje', { tripId });
         throw new DispatchConflictError('TRIP_NOT_SEARCHING', 'El viaje ya no está en búsqueda', { tripId, status: t?.status });
@@ -342,6 +343,7 @@ export class DispatchService {
       if (after) await this.store.unindex(after);
       const fareCents = repriced?.totalCents ?? trip.quotedFareCents;
       this.events.emit('trip.assigned', { tripId, driverId, vehicleId: before.vehicleId, isBackhaul: match !== null, fareCents, repriced: repriced !== null });
+      this.events.emit('trip.event', { event: assignedEvent, driverIds: [driverId] });
       return { tripId, driverId, vehicleId: before.vehicleId, idempotent: false, isBackhaul: match !== null, fareCents, repriced: repriced !== null };
     } catch (err) {
       // Compensación: PostgreSQL no confirmó → se deshace el lock de Redis y se sigue buscando.
@@ -397,16 +399,24 @@ export class DispatchService {
 
   /** Cancelación del pasajero mientras se busca chofer: se retira la oferta abierta. */
   async cancelSearching(tripId: string, reason = 'Cancelado por el pasajero durante la búsqueda'): Promise<boolean> {
-    const cancelled = await this.repo.cancelSearching(tripId, reason);
+    const event = await this.repo.cancelSearching(tripId, reason);
+    if (event) this.events.emit('trip.event', { event, driverIds: [] });
+    await this.withdrawOffer(tripId);
+    return event !== null;
+  }
+
+  /**
+   * Retira la oferta abierta de un viaje que dejó de buscar (cancelado por cualquier vía).
+   * El chofer vuelve a disponible y recibe offer.closed; una aceptación posterior falla.
+   */
+  async withdrawOffer(tripId: string): Promise<void> {
     const offer = await this.store.currentOffer(tripId);
-    if (offer) {
-      const now = this.clock.now().getTime();
-      const r = await this.store.respondOffer(tripId, offer.driverId, offer.offerId, now, false, this.config.dispatch.rejectionWindowMs);
-      if (r === 'OK' && (await this.repo.closeOffer(offer.offerId, 'CANCELLED'))) {
-        this.events.emit('offer.closed', { tripId, driverId: offer.driverId, offerId: offer.offerId, outcome: 'CANCELLED' });
-      }
+    if (!offer) return;
+    const now = this.clock.now().getTime();
+    const r = await this.store.respondOffer(tripId, offer.driverId, offer.offerId, now, false, this.config.dispatch.rejectionWindowMs);
+    if (r === 'OK' && (await this.repo.closeOffer(offer.offerId, 'CANCELLED'))) {
+      this.events.emit('offer.closed', { tripId, driverId: offer.driverId, offerId: offer.offerId, outcome: 'CANCELLED' });
     }
-    return cancelled;
   }
 
   /** Retoma viajes en búsqueda sin oferta abierta (réplica caída, choferes nuevos, tope de tiempo). */
@@ -425,7 +435,11 @@ export class DispatchService {
   }
 
   private async noDriver(tripId: string): Promise<AdvanceOutcome> {
-    if (await this.repo.markNoDriver(tripId)) this.events.emit('trip.no_driver', { tripId });
+    const event = await this.repo.markNoDriver(tripId);
+    if (event) {
+      this.events.emit('trip.no_driver', { tripId });
+      this.events.emit('trip.event', { event, driverIds: [] });
+    }
     return { kind: 'NO_DRIVER' };
   }
 }

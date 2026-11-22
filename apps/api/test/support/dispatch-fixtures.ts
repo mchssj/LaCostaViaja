@@ -159,6 +159,11 @@ export async function closeOpenTestTrips(pool: Pool, tag: string): Promise<void>
 export async function cleanupTestData(pool: Pool, tag: string): Promise<void> {
   const like = `TEST-${tag}-%`;
   await pool.query(`DELETE FROM trips WHERE origin_address = $1`, [`TEST-${tag}`]); // cascada: trip_offers, trip_track_points
+  // Ofertas / recorrido de choferes de test en viajes ajenos (p. ej. viajes viejos de la base de desarrollo).
+  const testDrivers = `SELECT id FROM drivers WHERE municipal_driver_permit_number LIKE $1`;
+  await pool.query(`DELETE FROM trip_offers WHERE driver_id IN (${testDrivers})`, [like]);
+  await pool.query(`DELETE FROM trip_track_points WHERE driver_id IN (${testDrivers})`, [like]);
+  await pool.query(`DELETE FROM panic_alerts WHERE driver_id IN (${testDrivers})`, [like]);
   await pool.query(`DELETE FROM driver_vehicle_compliance WHERE authorization_number LIKE $1`, [like]);
   await pool.query(`DELETE FROM vehicles WHERE municipal_vehicle_permit_number LIKE $1`, [like]);
   await pool.query(`DELETE FROM drivers WHERE municipal_driver_permit_number LIKE $1`, [like]);

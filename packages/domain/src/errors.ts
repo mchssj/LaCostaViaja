@@ -9,7 +9,14 @@ export type DomainErrorCode =
   | 'DRIVER_NOT_ELIGIBLE'
   | 'DRIVER_NOT_ON_SHIFT'
   | 'DISPATCH_CONFLICT'
-  | 'SERVICE_DEGRADED';
+  | 'SERVICE_DEGRADED'
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'INVALID_TRANSITION'
+  | 'IDEMPOTENCY_CONFLICT'
+  | 'RATE_LIMITED'
+  | 'PAYMENT_ERROR'
+  | 'VOUCHER_REJECTED';
 
 /** Error de negocio con código estable (la API lo traduce a HTTP sin acoplar el dominio a Nest). */
 export class DomainError extends Error {
@@ -80,7 +87,8 @@ export type DispatchConflictReason =
   | 'CLAIM_FAILED'
   | 'DRIVER_BUSY'
   | 'VEHICLE_IN_USE'
-  | 'INVALID_STATE';
+  | 'INVALID_STATE'
+  | 'PASSENGER_HAS_OPEN_TRIP';
 
 export class DispatchConflictError extends DomainError {
   constructor(

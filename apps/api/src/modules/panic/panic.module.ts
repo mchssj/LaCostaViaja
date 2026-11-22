@@ -1,13 +1,14 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module';
+import { Module } from '@nestjs/common';
+import { RealtimeModule } from '../realtime/realtime.module';
+import { ALERT_NOTIFIER, LogAlertNotifier } from './alert-notifier';
 import { PanicController } from './panic.controller';
-import { PanicGateway } from './panic.gateway';
 import { PanicService } from './panic.service';
+import { PanicWorkers } from './panic.workers';
 
 @Module({
-  imports: [AuthModule],
+  imports: [RealtimeModule],
   controllers: [PanicController],
-  providers: [PanicService, PanicGateway],
-  exports: [PanicService, PanicGateway],
+  providers: [PanicService, PanicWorkers, { provide: ALERT_NOTIFIER, useClass: LogAlertNotifier }],
+  exports: [PanicService],
 })
 export class PanicModule {}

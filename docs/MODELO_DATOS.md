@@ -1,6 +1,6 @@
 # Modelo de datos
 
-PostgreSQL 16 + PostGIS 3.4. Todas las geometrías son SRID 4326; los cálculos en metros sobre el corredor se hacen en UTM 21S (`lc_metric_srid()` = 32721). Actualizado el **2026-11-21** (migraciones `20261120120000` a `20261121130000`). Fase 3: autenticación, pagos, vouchers y COM. Fase 5: documentos de habilitación y auditoría.
+PostgreSQL 16 + PostGIS 3.4. Todas las geometrías son SRID 4326; los cálculos en metros sobre el corredor se hacen en UTM 21S (`lc_metric_srid()` = 32721). Actualizado el **2026-11-22** (migraciones `20261120120000` a `20261122100000`). Fase 3: autenticación, pagos, vouchers y COM (rehecha el 2026-11-22). Fase 5: documentos de habilitación y auditoría.
 
 El estado en tiempo real (posiciones, colas de parada, ofertas y locks) vive en Redis: ver la
 [documentación de la Fase 2](bitacora/2026-11-20-fase-2-redis-gps-despacho/DOCUMENTACION.md).
@@ -54,11 +54,11 @@ erDiagram
 | `auth_refresh_tokens` | Refresh tokens rotativos (solo hash) | `token_hash` único; `family` para detectar reutilización; vencimiento y revocación |
 | `otp_challenges` | Desafíos OTP para pasajeros registrados | teléfono, hash del código, intentos, vencimiento |
 | `idempotency_keys` | Idempotencia HTTP (crear viaje, pánico, pagos) | UNIQUE `(actor_kind, actor_id, key)`; respuesta guardada 24 h |
-| `payments` | Detalle de cobros por viaje | UNIQUE `provider_reference` (webhook idempotente); monto en centavos |
+| `payments` | Detalle de cobros por viaje. El monto sale siempre del viaje, nunca del cliente | UNIQUE `provider_reference` (id del pago de MP, webhook idempotente) y `provider_preference_id` (link/QR); un solo cobro efectivo/voucher `PAID` por viaje; un solo cobro de MP `PENDING` por viaje |
 | `municipal_programs` | Programas de vouchers con presupuesto por período | `spent_cents <= budget_cents` |
 | `vouchers` | Vouchers con saldo y vigencia | `code` único; `beneficiary_dni_hash` (Ley 25.326) |
 | `voucher_movements` | Reserva, consumo y liberación de saldo de voucher | monto > 0; `balance_after_cents >= 0` |
-| `trip_events` | Bitácora de eventos del viaje (offline/reintentos) | `client_event_id` único, `GIST(location)` |
+| `trip_events` | Bitácora de eventos del viaje. Su `id` es el `seq` que reciben las apps para recuperar lo perdido al reconectar | `client_event_id` único (reintentos), índice `(trip_id, id)`, `GIST(location)` |
 | `panic_alerts` | Alertas de pánico al COM con snapshot | `client_event_id` único, `GIST(location)`, `pg_notify`; Fase 3: `escalated_at`, `escalation_count` |
 | `habilitation_documents` | Documentos que respaldan una habilitación (DNI, licencia, VTV, seguro, etc.) — solo hash del archivo | Por entidad (chofer/vehículo/agencia); `verified_by`/`verified_at` |
 | `audit_log` | Auditoría de cambios sobre entidades del sistema | actor, action, entity, changes (jsonb), occurred_at |
@@ -83,3 +83,5 @@ erDiagram
 | `cleanup_expired_idempotency_keys()` | Limpieza de claves de idempotencia vencidas |
 | `cleanup_expired_otp_challenges()` | Limpieza de desafíos OTP vencidos |
 | `cleanup_expired_refresh_tokens()` | Limpieza de refresh tokens vencidos |
+| `voucher_trip_hold_cents(trip)` | Saldo de voucher reservado y pendiente para un viaje (reservas − liberaciones − consumos) |
+| `municipal_program_held_cents(programa)` | Saldo comprometido de un programa (se suma a `spent_cents` para no pasar el presupuesto) |
