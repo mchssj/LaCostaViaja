@@ -1,0 +1,9 @@
+{
+  "name": "LaCostaViaja Invitado",
+  "short_name": "LaCostaViaja",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F8F8",
+  "theme_color": "#0F6B72",
+  "icons": []
+}
