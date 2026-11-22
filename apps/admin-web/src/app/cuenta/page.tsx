@@ -162,6 +162,7 @@ function MfaCard({ user, onDone }: { user: OperatorProfile; onDone: (u: Operator
       {setup && (
         <div className="flex flex-col gap-3 text-[14px]">
           <ol className="list-decimal pl-5">
+            <li>Si ya habías cargado una cuenta «La Costa Viaja» en la app en un intento anterior, borrala primero.</li>
             <li>En la app de autenticación elegí «Agregar cuenta» → «Ingresar una clave de configuración».</li>
             <li>Cuenta: <b>La Costa Viaja ({user.username})</b>. Clave: copiá la de abajo. Tipo: basada en tiempo.</li>
             <li>Escribí el código de 6 dígitos que muestra la app.</li>
@@ -172,8 +173,9 @@ function MfaCard({ user, onDone }: { user: OperatorProfile; onDone: (u: Operator
             <a className="text-[13px] font-bold text-[#0F6B72] underline" href={setup.otpauthUrl}>Abrir en la app (desde el teléfono)</a>
           </div>
           <div className="flex flex-wrap items-end gap-2">
-            <input className="in w-[180px] text-center font-mono text-[20px] tracking-[0.3em]" inputMode="numeric" placeholder="000000" value={code} onChange={(e) => setCode(e.target.value)} />
-            <button className="btn" onClick={enable} disabled={busy || code.trim().length !== 6}>{busy ? 'Verificando…' : 'Activar'}</button>
+            {/* Las apps muestran "123 456": se dejan solo los dígitos. */}
+            <input className="in w-[180px] text-center font-mono text-[20px] tracking-[0.3em]" inputMode="numeric" autoComplete="one-time-code" maxLength={7} placeholder="000000" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} />
+            <button className="btn" onClick={enable} disabled={busy || code.length !== 6}>{busy ? 'Verificando…' : 'Activar'}</button>
           </div>
         </div>
       )}

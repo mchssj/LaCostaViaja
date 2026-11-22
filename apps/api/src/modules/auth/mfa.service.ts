@@ -46,7 +46,7 @@ export class MfaService {
     );
     const op = rows[0];
     if (!op?.is_active || !op.totp_enabled_at || !op.totp_secret_enc) throw new DomainError('UNAUTHORIZED', 'Credenciales inválidas');
-    const code = rawCode.trim().toLowerCase();
+    const code = rawCode.trim().toLowerCase().replace(/\s/g, '');
 
     if (/^\d{6}$/.test(code)) {
       if (await this.acceptTotp(id, decryptSecret(this.key, op.totp_secret_enc), code)) {
@@ -68,13 +68,19 @@ export class MfaService {
     throw new DomainError('UNAUTHORIZED', 'Código incorrecto');
   }
 
-  /** Genera un secreto nuevo PENDIENTE (no reemplaza el activo hasta confirmar con un código). */
+  /**
+   * Secreto PENDIENTE (no reemplaza el activo hasta confirmar con un código). Si ya hay uno pendiente
+   * se devuelve EL MISMO: si el usuario recarga la página o vuelve a tocar "Configurar" después de
+   * cargar la clave en el teléfono, la clave del teléfono sigue sirviendo.
+   */
   async setup(p: Principal): Promise<{ secret: string; otpauthUrl: string }> {
     const { rows } = await this.pool.query<{ username: string; totp_enabled_at: Date | null }>(`SELECT username, totp_enabled_at FROM operator_users WHERE id = $1`, [p.id]);
     const op = rows[0]!;
     if (op.totp_enabled_at) throw new DomainError('INVALID_TRANSITION', 'Ya tenés el segundo factor activo. Desactivalo antes de configurar otro.');
-    const secret = newTotpSecret();
-    await this.redis.set(`lc:mfa:pending:${p.id}`, encryptSecret(this.key, secret), 'PX', 15 * 60_000);
+    const pendingKey = `lc:mfa:pending:${p.id}`;
+    const existing = await this.redis.get(pendingKey);
+    const secret = existing ? decryptSecret(this.key, existing) : newTotpSecret();
+    await this.redis.set(pendingKey, encryptSecret(this.key, secret), 'PX', 30 * 60_000);
     const label = encodeURIComponent(`${ISSUER}:${op.username}`);
     const otpauthUrl = `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent(ISSUER)}&algorithm=SHA1&digits=6&period=30`;
     return { secret, otpauthUrl };
@@ -85,7 +91,12 @@ export class MfaService {
     const pending = await this.redis.get(`lc:mfa:pending:${p.id}`);
     if (!pending) throw new DomainError('INVALID_TRANSITION', 'La configuración venció. Empezá de nuevo.');
     const secret = decryptSecret(this.key, pending);
-    if (!(await this.acceptTotp(p.id, secret, code.trim()))) throw new DomainError('INVALID_INPUT', 'El código no coincide. Revisá la hora del teléfono y probá con el siguiente.');
+    if (!(await this.acceptTotp(p.id, secret, code.trim().replace(/\s/g, '')))) {
+      throw new DomainError(
+        'INVALID_INPUT',
+        'El código no coincide. Usá la cuenta "La Costa Viaja" que cargaste con la clave que se muestra en esta pantalla (si tenés otra anterior, borrala de la app), revisá que la hora del teléfono sea automática y probá con el código siguiente.',
+      );
+    }
     const codes = recoveryCodes();
     const hashes = await Promise.all(codes.map((c) => hashSecret(c)));
     const client = await this.pool.connect();

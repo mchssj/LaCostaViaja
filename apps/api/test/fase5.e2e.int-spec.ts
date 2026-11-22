@@ -102,6 +102,9 @@ describeIf('Fase 5 · usuarios, roles, permisos y segundo factor (E2E)', () => {
     const op = await insertOperator('LICENSING_OFFICER');
     const first = await login(op.username).expect(200);
     const setup = await http().post('/api/auth/me/mfa/setup').set(auth(first.body.accessToken)).expect(200);
+    // Volver a tocar "Configurar" (o recargar) devuelve la MISMA clave: la cargada en el teléfono sigue sirviendo.
+    const again = await http().post('/api/auth/me/mfa/setup').set(auth(first.body.accessToken)).expect(200);
+    expect(again.body.secret).toBe(setup.body.secret);
     const secret = base32Decode(setup.body.secret);
     expect(setup.body.otpauthUrl).toMatch(/^otpauth:\/\/totp\//);
     const s = step();
