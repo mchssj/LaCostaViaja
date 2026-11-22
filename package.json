@@ -13,6 +13,7 @@
     "test": "turbo run test",
     "test:int": "pnpm --filter @lacosta/api test:int",
     "dev:api": "turbo run dev --filter=@lacosta/api",
+    "dev:all": "concurrently -n api,admin,pwa -c blue,green,magenta \"pnpm dev:api\" \"pnpm --filter @lacosta/admin-web dev\" \"pnpm --filter @lacosta/guest-pwa dev\"",
     "infra:up": "docker compose up -d postgres redis",
     "infra:down": "docker compose down",
     "db:migrate": "pnpm --filter @lacosta/db migrate",
@@ -21,6 +22,7 @@
     "db:reset": "pnpm --filter @lacosta/db reset"
   },
   "devDependencies": {
+    "concurrently": "^9.1.0",
     "turbo": "^2.5.8",
     "typescript": "~5.9.3"
   }
