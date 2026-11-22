@@ -12,5 +12,19 @@ body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
   .pl { @apply inline-flex items-center h-[26px] px-[10px] rounded-[13px] text-[13px] font-bold whitespace-nowrap; }
   .nv { @apply block py-[13px] px-3 rounded-[10px] text-[15px] font-semibold text-[#0A3A3C] no-underline border-l-4 border-transparent; }
   .nv.on { @apply bg-[#E6F4F5] border-l-[#0F6B72] text-[#0F6B72] font-bold; }
-  .kp { @apply text-[30px] font-bold text-[#0A3A3C] leading-none; }
+  .in { @apply h-11 rounded-[10px] border-2 border-[#C9D3D8] bg-white px-3 text-[15px] text-[#0A3A3C] outline-none focus:border-[#0F6B72]; }
+  .kp {@apply text-[30px] font-bold text-[#0A3A3C] leading-none; }
+
+  /* Tablas de datos del panel */
+  .tbl-wrap { @apply w-full overflow-x-auto rounded-[10px] border border-[#D3DCDF]; }
+  .tbl { @apply w-full border-collapse text-[14px] text-[#0A3A3C]; }
+  .tbl thead th { @apply sticky top-0 border-b-2 border-[#C9D3D8] bg-[#EEF4F5] px-3 py-2.5 text-left text-[12px] font-bold uppercase tracking-wide text-[#34454D] whitespace-nowrap; }
+  .tbl tbody td { @apply border-b border-[#E3EAEC] px-3 py-2.5 align-middle; }
+  .tbl tbody tr:nth-child(even) td { @apply bg-[#FAFCFC]; }
+  .tbl tbody tr:hover td { @apply bg-[#EEF7F7]; }
+  .tbl tbody tr:last-child td { @apply border-b-0; }
+  .tbl .num { @apply text-right tabular-nums whitespace-nowrap; }
+  .tbl th.num { @apply text-right; }
+  .tbl .grp td { @apply bg-[#E6F4F5] py-1.5 text-[12px] font-bold uppercase tracking-wide text-[#0F6B72]; }
+  .tbl .sub { @apply block text-[11px] font-semibold normal-case tracking-normal text-[#5B6B72]; }
 }
