@@ -2,6 +2,11 @@
 
 Todo lo que se planteó o se empezó y todavía no está terminado o desplegado. Actualizado el **2026-11-21**.
 
+## Fase 5 (base de datos): documentos de habilitación y auditoría (2026-11-21): implementada y probada
+- Tablas `habilitation_documents` y `audit_log`, más `verified_by`/`verified_at` en drivers/vehicles/agencies.
+- Smoke test `20261121130001_smoke_fase_5.sql` pasa.
+- Pendiente: integración con APIs externas (RENAPER, VTV, aseguradoras) para verificación de veracidad.
+
 ## Fase 1: monorepo, esquema PostGIS y motor tarifario (2026-11-20): probada en local, sin commit ni despliegue
 
 - **Estado:** todas las pruebas pasan contra PostGIS 3.4 en Docker (dominio, API, SQL e integración). Detalle: [`2026-11-20-fase-1-monorepo-postgis-tarifas`](bitacora/2026-11-20-fase-1-monorepo-postgis-tarifas/).

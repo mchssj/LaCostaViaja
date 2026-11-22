@@ -1,6 +1,6 @@
 # Modelo de datos
 
-PostgreSQL 16 + PostGIS 3.4. Todas las geometrías son SRID 4326; los cálculos en metros sobre el corredor se hacen en UTM 21S (`lc_metric_srid()` = 32721). Actualizado el **2026-11-21** (migraciones `20261120120000` a `20261121090000`). Fase 3: autenticación, pagos, vouchers y COM.
+PostgreSQL 16 + PostGIS 3.4. Todas las geometrías son SRID 4326; los cálculos en metros sobre el corredor se hacen en UTM 21S (`lc_metric_srid()` = 32721). Actualizado el **2026-11-21** (migraciones `20261120120000` a `20261121130000`). Fase 3: autenticación, pagos, vouchers y COM. Fase 5: documentos de habilitación y auditoría.
 
 El estado en tiempo real (posiciones, colas de parada, ofertas y locks) vive en Redis: ver la
 [documentación de la Fase 2](bitacora/2026-11-20-fase-2-redis-gps-despacho/DOCUMENTACION.md).
@@ -39,9 +39,9 @@ erDiagram
 | `corridor_axes` | Eje de la RP11 (norte → sur) para referenciación lineal | `GIST(geom)` |
 | `localities` | 14 localidades con polígono y orden sobre el corredor | `GIST(geom)`, `corridor_order` único, trigger anti-superposición |
 | `dispatch_zones` | Zonas/paradas de alta demanda dentro de una localidad | `GIST(geom)`, `GIST(pickup_point)`, trigger "dentro de su localidad" |
-| `agencies` | Agencias de remises habilitadas | CUIT validado, `GIST(base_location)`; `mp_collector_id` (cuenta colectora Mercado Pago, Fase 3) |
-| `drivers` | Choferes: licencia profesional, habilitación municipal, estado, `accepts_interurban`, PIN de autenticación | DNI/CUIL únicos, CUIL coincide con DNI; `pin_hash`, `pin_failed_attempts`, `pin_locked_until` (Fase 3) |
-| `vehicles` | Vehículos: VTV, seguro de pasajeros, habilitación | Patente Mercosur o anterior; remis exige agencia |
+| `agencies` | Agencias de remises habilitadas | CUIT validado, `GIST(base_location)`; `mp_collector_id` (cuenta colectora Mercado Pago, Fase 3); `verified_by`/`verified_at` (Fase 5) |
+| `drivers` | Choferes: licencia profesional, habilitación municipal, estado, `accepts_interurban`, PIN de autenticación | DNI/CUIL únicos, CUIL coincide con DNI; `pin_hash`, `pin_failed_attempts`, `pin_locked_until` (Fase 3); `verified_by`/`verified_at` (Fase 5) |
+| `vehicles` | Vehículos: VTV, seguro de pasajeros, habilitación | Patente Mercosur o anterior; remis exige agencia; `verified_by`/`verified_at` (Fase 5) |
 | `driver_vehicle_compliance` | Autorización chofer↔vehículo con vigencia | `EXCLUDE` sin vigencias superpuestas por par |
 | `tariff_schedules` | Cuadro tarifario aprobado: vigencia, franja nocturna, umbral, redondeo | `EXCLUDE` sin cuadros aprobados superpuestos |
 | `tariff_rules` | Valores por servicio × alcance × temporada × franja | Único por combinación y cuadro |
@@ -60,6 +60,8 @@ erDiagram
 | `voucher_movements` | Reserva, consumo y liberación de saldo de voucher | monto > 0; `balance_after_cents >= 0` |
 | `trip_events` | Bitácora de eventos del viaje (offline/reintentos) | `client_event_id` único, `GIST(location)` |
 | `panic_alerts` | Alertas de pánico al COM con snapshot | `client_event_id` único, `GIST(location)`, `pg_notify`; Fase 3: `escalated_at`, `escalation_count` |
+| `habilitation_documents` | Documentos que respaldan una habilitación (DNI, licencia, VTV, seguro, etc.) — solo hash del archivo | Por entidad (chofer/vehículo/agencia); `verified_by`/`verified_at` |
+| `audit_log` | Auditoría de cambios sobre entidades del sistema | actor, action, entity, changes (jsonb), occurred_at |
 
 ## Vistas y funciones
 
