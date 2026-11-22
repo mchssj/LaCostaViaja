@@ -22,7 +22,9 @@ export async function apiFetch<T = any>(path: string, init: RequestInit = {}): P
     const text = await res.text();
     throw new Error(`API ${res.status}: ${text}`);
   }
-  return res.json();
+  const text = await res.text();
+  if (!text) return null as any;
+  return JSON.parse(text);
 }
 
 export async function loginOperator(username: string, password: string) {

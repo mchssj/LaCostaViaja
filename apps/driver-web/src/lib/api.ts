@@ -11,5 +11,7 @@ export async function apiFetch<T = any>(path: string, init: RequestInit = {}): P
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
   if (!res.ok) { const t = await res.text(); throw new Error(`API ${res.status}: ${t}`); }
-  return res.json();
+  const text = await res.text();
+  if (!text) return null as any;
+  return JSON.parse(text);
 }
