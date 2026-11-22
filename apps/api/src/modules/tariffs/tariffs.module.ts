@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TariffsController } from './tariffs.controller';
 import { PostgresTariffRepository } from './postgres-tariff.repository';
 import { TARIFF_REPOSITORY } from './tariff-repository';
 
 @Module({
+  controllers: [TariffsController],
   providers: [{ provide: TARIFF_REPOSITORY, useClass: PostgresTariffRepository }],
   exports: [TARIFF_REPOSITORY],
 })
