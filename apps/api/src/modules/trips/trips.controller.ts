@@ -57,4 +57,9 @@ export class TripsController {
   complete(@Param('id') id: string, @Body() body: any) {
     return this.trips.completeTrip(id, body?.meteredFareCents);
   }
+
+  @Post(':id/payment/cash')
+  cashPayment(@Param('id') id: string, @Body() body: any) {
+    return this.trips.cashPayment(id, body?.amountCents ?? 0);
+  }
 }
