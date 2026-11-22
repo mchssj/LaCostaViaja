@@ -8,7 +8,7 @@ export function clearTripId() { localStorage.removeItem('lc_trip_id'); }
 export async function apiFetch<T = any>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(init.headers as any) };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token && !headers['Authorization']) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
   if (!res.ok) { const t = await res.text(); throw new Error(`API ${res.status}: ${t}`); }
   const text = await res.text();
