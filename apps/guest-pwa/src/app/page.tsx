@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, setToken } from '@/lib/api';
+import QrScanner from '@/components/QrScanner';
 
 interface Locality { code: string; name: string; lat: number; lng: number; }
 
@@ -14,6 +15,7 @@ export default function HomePage() {
   const [originAddress, setOriginAddress] = useState('');
   const [destAddress, setDestAddress] = useState('');
   const [qrCode, setQrCode] = useState('');
+  const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -53,11 +55,19 @@ export default function HomePage() {
         <h1 className="text-[26px] font-bold text-[#0A3A3C] text-center">LaCostaViaja</h1>
         <p className="text-[14px] text-[#34454D] text-center">Modo Invitado — pedí tu taxi o remis sin registrarte.</p>
 
-        <label className="flex flex-col gap-1.5 text-[14px] font-semibold text-[#34454D]">
-          Código QR (parada/hotel)
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[14px] font-semibold text-[#34454D]">Código QR (parada/hotel)</span>
+          {scanning ? (
+            <QrScanner onScan={(code) => { setQrCode(code); setScanning(false); }} onError={(e) => { setError(e); setScanning(false); }} />
+          ) : (
+            <button type="button" onClick={() => setScanning(true)}
+              className="h-11 border-2 border-[#0F6B72] rounded-[10px] bg-white text-[#0F6B72] font-bold text-[15px]">
+              📷 Escanear QR con la cámara
+            </button>
+          )}
           <input className="h-11 border-2 border-[#4F5F67] rounded-[10px] px-3 font-semibold text-[16px] text-[#0A3A3C] bg-white"
-            value={qrCode} onChange={(e) => setQrCode(e.target.value)} placeholder="Opcional" />
-        </label>
+            value={qrCode} onChange={(e) => setQrCode(e.target.value)} placeholder="O ingresá el código manualmente" />
+        </div>
 
         <label className="flex flex-col gap-1.5 text-[14px] font-semibold text-[#34454D]">
           Origen
