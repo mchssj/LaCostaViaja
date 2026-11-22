@@ -3,6 +3,7 @@ dist/
 coverage/
 .turbo/
 *.tsbuildinfo
+.expo/
 .env
 .env.*.local
 infra/osrm/data/*
