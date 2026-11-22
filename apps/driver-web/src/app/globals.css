@@ -1,4 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+
+/* App del chofer: pensada para usarse en el auto, con una mano. Botones grandes, alto contraste. */
+html, body { margin: 0; height: 100%; font-family: 'Inter', system-ui, sans-serif; background: #F4F8F8; color: #0A3A3C; }
+body { -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+
+@layer components {
+  .card { @apply rounded-[16px] border-2 border-[#C9D3D8] bg-white p-4; }
+  .btn { @apply flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[12px] border-0 bg-[#0F6B72] px-4 text-[17px] font-bold text-white active:brightness-90 disabled:opacity-50; }
+  .btn-outline { @apply flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[12px] border-2 border-[#0F6B72] bg-white px-4 text-[17px] font-bold text-[#0F6B72] active:bg-[#E6F4F5] disabled:opacity-50; }
+  .btn-danger { @apply flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[12px] border-2 border-[#A31F1F] bg-white px-4 text-[16px] font-bold text-[#A31F1F] active:bg-[#FDECEA] disabled:opacity-50; }
+  .in { @apply h-[52px] w-full rounded-[12px] border-2 border-[#C9D3D8] bg-white px-4 text-[18px] text-[#0A3A3C] outline-none focus:border-[#0F6B72]; }
+  .lbl { @apply text-[14px] font-bold text-[#34454D]; }
+  .muted { @apply text-[14px] text-[#5B6B72]; }
+  .chip { @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-bold; }
+  .err { @apply rounded-[10px] border border-[#F2B8B5] bg-[#FDECEA] px-3 py-2 text-[14px] font-semibold text-[#A31F1F]; }
+  .ok { @apply rounded-[10px] border border-[#A9D8B6] bg-[#E3F4E8] px-3 py-2 text-[14px] font-semibold text-[#1B6B35]; }
+}
+
+.leaflet-container { font-family: inherit; }
+.pin { display: flex; align-items: center; justify-content: center; border-radius: 9999px; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); font-size: 15px; }
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(163,31,31,.55); } 100% { box-shadow: 0 0 0 18px rgba(163,31,31,0); } }
+.pulse { animation: pulse-ring 1.2s infinite; }

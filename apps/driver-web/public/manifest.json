@@ -1,0 +1,14 @@
+{
+  "name": "La Costa Viaja · Chofer",
+  "short_name": "LCV Chofer",
+  "description": "App del chofer habilitado del Partido de La Costa",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F8F8",
+  "theme_color": "#0F6B72",
+  "lang": "es-AR",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
