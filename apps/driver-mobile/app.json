@@ -1,12 +1,23 @@
 {
   "expo": {
     "newArchEnabled": true,
-    "name": "LaCostaViaja Chofer",
+    "name": "La Costa Viaja Chofer",
     "slug": "lacosta-driver",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "scheme": "lacosta-driver",
     "userInterfaceStyle": "light",
-    "android": { "package": "com.lacosta.driver" }
+    "android": {
+      "package": "com.lacosta.driver",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "VIBRATE"]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "La Costa Viaja usa tu ubicación mientras tenés el turno abierto para asignarte viajes cercanos y compartirla con el COM si apretás pánico."
+        }
+      ]
+    ]
   }
 }

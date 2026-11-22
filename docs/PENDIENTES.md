@@ -37,11 +37,11 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
     - Prueba de carga real.
   - No correr `pnpm build` con la preview de la API abierta: borra `dist/` y la preview se cae (hay que reiniciarla).
 
-## Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM (2026-11-22): rehecha y probada en local, sin commit ni despliegue
+## Fase 3: API REST, WebSockets, pagos/vouchers y alerta COM (2026-11-22): rehecha y probada en local, con commit en `feat/fase-3-4-api-panel-chofer`, sin despliegue
 
 - **Estado:** base de datos de kyan (2026-11-21) y capa de API rehecha el 2026-11-22 después de la revisión (permisos, pagos, vouchers, pánico, chofer trabado). Pasan 15 E2E con dos réplicas, Socket.IO, Redis y PostGIS reales, más todas las suites anteriores. Detalle: [`2026-11-20-fase-3-api-websockets-pagos-com`](bitacora/2026-11-20-fase-3-api-websockets-pagos-com/).
 - **Falta:**
-  - **Commit:** hacerlo en una rama propia cuando se pida. En el árbol de trabajo también hay trabajo sin commit de kyan (`passenger-mobile/app`, `lib`, `mockup/`, `localities.controller.ts`), que no se tocó salvo `@Public()` en `localities.controller.ts`.
+  - ~~**Commit**~~: hecho el 2026-11-22 en la rama `feat/fase-3-4-api-panel-chofer` (pusheada, sin PR). `localities.controller.ts` de kyan entró en ese commit porque la API lo necesita. Quedan **sin commit** a propósito `passenger-mobile/app`, `passenger-mobile/lib` y `mockup/`, que son trabajo de kyan.
   - **Mercado Pago:**
     - Probar contra el sandbox real: credenciales de prueba en el `.env` (`PAYMENTS_PROVIDER=mercadopago`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`), que carga el responsable de la cuenta.
     - **Split marketplace** a agencias y choferes: no implementado. Requiere la autorización OAuth de cada vendedor y una cuenta habilitada.
@@ -52,15 +52,25 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
     - Plazo de escalamiento (60 s).
     - Plazos de conservación de alertas, snapshots, eventos y recorrido.
   - ~~**Entorno local:** Windows bloqueaba el puerto 56379 del Redis.~~ Resuelto el 2026-11-22: Redis pasó al **56390** (`docker-compose.yml`, `.env.example`, `.env`).
-  - **Prototipos:** `driver-web` y la PWA usan `test-qr` / `demo-qr` para entrar como invitado, así que solo funcionan con `ALLOW_UNSIGNED_QR=true` (desarrollo). Para producción hay que imprimir QR firmados (`POST /auth/guest-qr-codes`).
+  - **QR firmados:** los atajos de prueba (`test-qr`) solo funcionan con `ALLOW_UNSIGNED_QR=true` (desarrollo). Para producción hay que imprimir QR firmados (`POST /auth/guest-qr-codes`) que apunten a `https://<pwa>/?qr=<código>`.
   - **`passenger-mobile`:** no pasa el typecheck. Es trabajo sin commit de kyan (falta `@react-native-async-storage/async-storage` y la config de módulos).
-  - **Decidir con el usuario:**
-    - Si `driver-web` (Next.js) reemplaza a `driver-mobile` (Expo) o es solo un prototipo.
-    - Si el Modo Invitado (`guest-pwa`) queda como app aparte o como la versión web de `passenger-mobile`.
 
-## Fases 4 y 5: prototipos de kyan sin plan (2026-11-21/22)
+## Fase 4: app del chofer (web y Expo) y Modo Invitado (2026-11-22): probada en el navegador, con commit en `feat/fase-3-4-api-panel-chofer`, sin despliegue
 
-- **Estado:** hay prototipos funcionales de `admin-web` (Leaflet, consola COM), `guest-pwa` (QR con cámara), `driver-web` y apps Expo, pero no tienen `PLAN.md` en la bitácora. Antes de seguir con esas fases, escribir sus planes según la convención y usar los prototipos como base.
+- **Estado:** `driver-core` compartido, `driver-web` y `guest-pwa` rehechas, y `driver-mobile` (Expo) portada. Funcionó de punta a punta en el navegador. Las decisiones del 2026-11-22: hay app del chofer en web y en Expo, y el invitado marca origen y destino en un mapa con su ubicación. Detalle: [`2026-11-22-fase-4-chofer-e-invitado`](bitacora/2026-11-22-fase-4-chofer-e-invitado/).
+- **Falta:**
+  - **PR** de la rama `feat/fase-3-4-api-panel-chofer` hacia `main` (no abierto).
+  - **Probar `driver-mobile` en un teléfono** con Expo Go. Solo pasó el typecheck. Para la exportación web de Expo faltan `react-dom` y `@expo/metro-runtime`; hay que avisar antes de instalarlos.
+  - Probar con el GPS real de un teléfono y con HTTPS: el navegador lo exige fuera de `localhost`.
+  - **Fase 6:**
+    - GPS en segundo plano y notificaciones push del chofer.
+    - Geocodificación de direcciones para el invitado.
+    - QR firmados impresos.
+  - **Decidir con el municipio** si el chofer usará la PWA, la app Expo o las dos en producción.
+
+## Fase 5: panel municipal, prototipo de kyan sin plan (2026-11-21/22)
+
+- **Estado:** hay prototipo de `admin-web` (Leaflet, consola COM) sin `PLAN.md`. Antes de seguir, escribir el plan de la fase según la convención.
 - **Panel, tablas legibles (2026-11-22):** hecho en Tarifas, Flota y Vouchers ([`2026-11-22-panel-tablas-legibles`](bitacora/2026-11-22-panel-tablas-legibles/)). Falta:
   - Ver las tablas de Vouchers con datos y probar el alta de programas y vouchers (los formularios ya piden pesos desde el 2026-11-22) con un usuario administrador municipal.
   - Que el panel renueve el token: el acceso vence a los 15 minutos y hoy obliga a volver a ingresar.

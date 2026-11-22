@@ -1,9 +1,14 @@
 {
-  "name": "LaCostaViaja Invitado",
-  "short_name": "LaCostaViaja",
+  "name": "La Costa Viaja · Modo Invitado",
+  "short_name": "La Costa Viaja",
+  "description": "Pedí un taxi o remis habilitado del Partido de La Costa sin registrarte",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#F4F8F8",
   "theme_color": "#0F6B72",
-  "icons": []
+  "lang": "es-AR",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
 }

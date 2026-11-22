@@ -9,12 +9,14 @@ del **Partido de La Costa, Provincia de Buenos Aires**.
 LaCostaViaja/
 ├─ apps/
 │  ├─ api/                 NestJS · tarifas, despacho, tracking, COM            (Fase 1 ✔ tarifas)
-│  ├─ driver-mobile/       Expo · app del chofer (Android)                      (Fase 4)
-│  ├─ passenger-mobile/    Expo · app del pasajero                              (Fase 4)
-│  ├─ guest-pwa/           Next.js PWA · "Modo Invitado" por QR                 (Fase 4)
+│  ├─ driver-web/          Next.js PWA · app del chofer (:3003)                 (Fase 4 ✔)
+│  ├─ driver-mobile/       Expo · app del chofer (Android)                      (Fase 4, sin probar en equipo)
+│  ├─ passenger-mobile/    Expo · app del pasajero                              (Fase 4, en curso)
+│  ├─ guest-pwa/           Next.js PWA · "Modo Invitado" por QR (:3002)         (Fase 4 ✔)
 │  └─ admin-web/           Next.js + Tailwind · panel municipal, agencias, COM  (Fase 5)
 ├─ packages/
 │  ├─ domain/              Tipos + motor tarifario PURO (compartido backend/apps)
+│  ├─ driver-core/         Cliente de la API, estados del viaje, GPS y socket (apps cliente)
 │  └─ db/                  Migraciones PostGIS, seeds de La Costa, smoke tests SQL, runner
 ├─ infra/osrm/             Ruteo vial OSRM (opcional)
 ├─ docs/
@@ -57,7 +59,7 @@ Invoke-RestMethod -Method Post http://localhost:3000/api/v1/fares/quote -Content
 | 1 | Monorepo, esquema PostGIS + seeds, `FareCalculatorService` | ✔ |
 | 2 | Redis GPS en vivo, colas de despacho por corredor/parada, lock atómico, prioridad de Viaje de Vuelta | ✔ |
 | 3 | API REST + WebSockets del ciclo de vida del viaje, pagos (efectivo / Mercado Pago / vouchers), alertas COM | ✔ (documentación en `/api/docs`) |
-| 4 | App del chofer (Android) y PWA Modo Invitado por QR | Prototipos sin plan |
+| 4 | App del chofer (PWA y Android) y PWA Modo Invitado por QR | ✔ web probada de punta a punta (Expo sin probar en equipo) |
 | 5 | Panel municipal: habilitaciones, editor tarifario, mapa de calor, consola COM | Prototipo sin plan |
 | 6 | Pruebas de carga invierno/verano, resiliencia, despliegue y auto-escalado | — |
 

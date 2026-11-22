@@ -315,6 +315,9 @@ importers:
       '@lacosta/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@lacosta/driver-core':
+        specifier: workspace:*
+        version: link:../../packages/driver-core
       '@react-native-async-storage/async-storage':
         specifier: 1.23.1
         version: 1.23.1(react-native@0.76.9(@babel/core@7.29.13(supports-color@8.1.1))(@babel/preset-env@7.29.14(@babel/core@7.29.13(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@18.3.31)(react@18.3.1)(supports-color@8.1.1))
@@ -345,6 +348,9 @@ importers:
       react-native-web:
         specifier: ~0.19.13
         version: 0.19.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.4(supports-color@8.1.1)
     devDependencies:
       '@babel/runtime':
         specifier: ^7.26.0

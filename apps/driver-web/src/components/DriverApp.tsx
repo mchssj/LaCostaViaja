@@ -26,6 +26,7 @@ import OfferSheet from './OfferSheet';
 import TripPanel from './TripPanel';
 import PanicButton from './PanicButton';
 import DevTools from './DevTools';
+import MapBoundary from './MapBoundary';
 
 const TripMap = dynamic(() => import('./TripMap'), { ssr: false, loading: () => <div className="h-full w-full bg-[#E3EAEC]" /> });
 
@@ -346,7 +347,9 @@ export default function DriverApp() {
 
       {/* Mapa */}
       <div className="relative min-h-[180px] flex-1">
-        <TripMap car={car} origin={activeTrip?.origin} destination={activeTrip?.destination} focus={focus} />
+        <MapBoundary>
+          {(attempt) => <TripMap key={attempt} car={car} origin={activeTrip?.origin} destination={activeTrip?.destination} focus={focus} />}
+        </MapBoundary>
         <div className="pointer-events-none absolute left-3 top-3 z-[500] flex flex-col gap-1">
           <span className={`chip pointer-events-auto shadow ${location.error ? 'bg-[#FDECEA] text-[#A31F1F]' : location.position ? 'bg-white text-[#0A3A3C]' : 'bg-[#FFF4DB] text-[#7A5300]'}`}>
             {location.error
