@@ -4,6 +4,9 @@ coverage/
 .turbo/
 *.tsbuildinfo
 .expo/
+# Next.js: compilación/caché y tipos generados por `next dev`/`next build`
+.next/
+next-env.d.ts
 .env
 .env.*.local
 infra/osrm/data/*
