@@ -41,7 +41,7 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
 
 - **Estado:** base de datos de kyan (2026-11-21) y capa de API rehecha el 2026-11-22 después de la revisión (permisos, pagos, vouchers, pánico, chofer trabado). Pasan 15 E2E con dos réplicas, Socket.IO, Redis y PostGIS reales, más todas las suites anteriores. Detalle: [`2026-11-20-fase-3-api-websockets-pagos-com`](bitacora/2026-11-20-fase-3-api-websockets-pagos-com/).
 - **Falta:**
-  - ~~**Commit**~~: hecho el 2026-11-22 en la rama `feat/fase-3-4-api-panel-chofer` (pusheada, sin PR). `localities.controller.ts` de kyan entró en ese commit porque la API lo necesita. Quedan **sin commit** a propósito `passenger-mobile/app`, `passenger-mobile/lib` y `mockup/`, que son trabajo de kyan.
+  - ~~**Commit**~~: hecho el 2026-11-22 y mergeado a `main` (PR #1). `localities.controller.ts` de kyan entró en ese commit porque la API lo necesita. El trabajo en curso de kyan (`passenger-mobile/app`, `passenger-mobile/lib` y `mockup/`) se commiteó tal cual en `main` el 2026-11-22, a pedido del usuario.
   - **Mercado Pago:**
     - Probar contra el sandbox real: credenciales de prueba en el `.env` (`PAYMENTS_PROVIDER=mercadopago`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`), que carga el responsable de la cuenta.
     - **Split marketplace** a agencias y choferes: no implementado. Requiere la autorización OAuth de cada vendedor y una cuenta habilitada.
@@ -53,7 +53,7 @@ Todo lo que se planteó o se empezó y todavía no está terminado o desplegado.
     - Plazos de conservación de alertas, snapshots, eventos y recorrido.
   - ~~**Entorno local:** Windows bloqueaba el puerto 56379 del Redis.~~ Resuelto el 2026-11-22: Redis pasó al **56390** (`docker-compose.yml`, `.env.example`, `.env`).
   - **QR firmados:** los atajos de prueba (`test-qr`) solo funcionan con `ALLOW_UNSIGNED_QR=true` (desarrollo). Para producción hay que imprimir QR firmados (`POST /auth/guest-qr-codes`) que apunten a `https://<pwa>/?qr=<código>`.
-  - **`passenger-mobile`:** no pasa el typecheck. Es trabajo sin commit de kyan (falta `@react-native-async-storage/async-storage` y la config de módulos).
+  - **`passenger-mobile`:** está en `main` pero **no compila** (no pasa el typecheck): falta la dependencia `@react-native-async-storage/async-storage` y la configuración de módulos. Es trabajo en curso de kyan, commiteado tal cual el 2026-11-22.
 
 ## Fase 4: app del chofer (web y Expo) y Modo Invitado (2026-11-22): probada en el navegador, con commit en `feat/fase-3-4-api-panel-chofer`, sin despliegue
 

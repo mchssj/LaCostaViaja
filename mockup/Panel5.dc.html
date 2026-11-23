@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>LaCostaViaja – Panel Municipal 5. Vouchers y Beneficios</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.app{width:1440px;height:900px;display:flex;background:#F4F8F8;font-family:'Inter',system-ui,sans-serif;color:#34454D;overflow:hidden}
+.sb{width:250px;flex:none;background:#fff;border-right:2px solid #C9D3D8;display:flex;flex-direction:column;padding:20px 14px;box-sizing:border-box;gap:6px}
+.nv{display:block;padding:13px 12px;border-radius:10px;font-size:15px;font-weight:600;color:#0A3A3C;text-decoration:none;border-left:4px solid transparent}
+.nv.on{background:#E6F4F5;border-left-color:#0F6B72;color:#0F6B72;font-weight:700}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:64px;flex:none;background:#fff;border-bottom:2px solid #C9D3D8;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.ct{flex:1;padding:20px 24px;display:flex;flex-direction:column;gap:16px;min-height:0}
+.card{background:#fff;border:2px solid #C9D3D8;border-radius:14px;padding:16px;box-sizing:border-box}
+h1{margin:0;font-size:22px;color:#0A3A3C}h3{margin:0;font-size:16px;color:#0A3A3C}
+.btn{height:44px;border:0;border-radius:10px;background:#0F6B72;color:#fff;font:700 15px Inter,sans-serif;padding:0 18px;cursor:pointer}
+.bo{height:44px;border:2px solid #0F6B72;border-radius:10px;background:#fff;color:#0F6B72;font:700 15px Inter,sans-serif;padding:0 16px;cursor:pointer}
+.br{height:44px;border:2px solid #A31F1F;border-radius:10px;background:#fff;color:#A31F1F;font:700 14px Inter,sans-serif;padding:0 12px;cursor:pointer}
+.pl{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;font-size:13px;font-weight:700;white-space:nowrap}
+.g{background:#E3F4E8;color:#1B6B3A}.y{background:#FFF1CC;color:#7A5200}.r{background:#FDECEA;color:#A31F1F}.t{background:#E6F4F5;color:#0F6B72}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:13px;color:#34454D;padding:10px 12px;border-bottom:2px solid #C9D3D8}td{padding:9px 12px;border-bottom:1.5px solid #E3EAEC;color:#0A3A3C;vertical-align:middle}
+.in{height:44px;border:2px solid #4F5F67;border-radius:10px;padding:0 12px;font:600 16px Inter,sans-serif;color:#0A3A3C;box-sizing:border-box;background:#fff;width:100%}
+.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:#34454D}
+.sub{font-size:13px;color:#34454D}.kp{font-size:30px;font-weight:700;color:#0A3A3C;line-height:1.1}
+@keyframes pu{0%{r:12;opacity:.7}100%{r:34;opacity:0}}.pulse{animation:pu 1.4s infinite}
+</style>
+</helmet>
+<div class="app">
+<nav class="sb" aria-label="Vistas del panel">
+<div style="display:flex;align-items:center;gap:10px;padding:0 4px 18px;border-bottom:2px solid #C9D3D8;margin-bottom:10px"><img src="./assets/33dc597327ae3be2c21531c4ae92566f.png" alt="La Costa" style="height:52px;width:auto"><div style="display:flex;flex-direction:column;line-height:1.25"><b style="font-size:15px;color:#0A3A3C">LaCostaViaja</b><span class="sub" style="font-weight:600">Gestión Municipal</span></div></div>
+<a href="#" class="nv">1. Monitoreo y COM</a><a href="#" class="nv">2. Flota y Habilitaciones</a><a href="#" class="nv">3. Cuadro Tarifario</a><a href="#" class="nv">4. Estadísticas y Turismo</a><a href="#" class="nv on">5. Vouchers y Beneficios</a>
+<div style="flex:1"></div>
+<div style="display:flex;align-items:center;gap:10px;padding:14px 4px 0;border-top:2px solid #C9D3D8"><div style="width:40px;height:40px;border-radius:20px;background:#0F6B72;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">DT</div><div style="display:flex;flex-direction:column;line-height:1.3"><b style="font-size:14px;color:#0A3A3C">Dirección de Transporte</b><span class="sub">Partido de La Costa</span></div></div>
+</nav>
+<div class="main">
+<div class="top">
+<label style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#34454D">Zona
+<select aria-label="Filtro por zona" style="height:42px;border:2px solid #4F5F67;border-radius:10px;padding:0 10px;font:600 15px Inter,sans-serif;color:#0A3A3C;background:#fff;min-width:340px"><option>Todo el Partido (14 localidades)</option><option>Zona Sur: Mar de Ajó - San Bernardo</option><option>Zona Centro: Santa Teresita - Mar del Tuyú</option><option>Zona Norte: San Clemente</option></select></label>
+<span class="pl t" style="height:36px;font-size:14px;gap:8px"><span style="width:10px;height:10px;border-radius:5px;background:#0F6B72"></span>Modo activo: Temporada Baja</span>
+</div>
+<div class="ct">
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#34454D"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Los motivos médicos están resguardados y solo son visibles para el área autorizante.</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px"><div class="card"><div class="sub" style="font-weight:600">Beneficiarios activos</div><div class="kp">340</div></div><div class="card"><div class="sub" style="font-weight:600">Viajes consumidos este mes</div><div class="kp">1.120</div></div><div class="card"><div class="sub" style="font-weight:600">Presupuesto ejecutado</div><div class="kp">68%</div><div style="height:10px;border-radius:5px;background:#E3EAEC;margin-top:8px"><div style="width:68%;height:10px;border-radius:5px;background:#0F6B72"></div></div></div></div>
+<div class="card"><h3>Alta rápida de beneficiario</h3><div style="display:grid;grid-template-columns:1fr 1.4fr 1.7fr 1fr auto;gap:12px;align-items:end;margin-top:10px">
+<label class="f">DNI del vecino<input class="in" placeholder="00.000.000"></label>
+<label class="f">Nombre completo<input class="in" placeholder="Nombre y apellido"></label>
+<label class="f">Área autorizante<select class="in"><option>Secretaría de Salud / Hospitales</option><option>Discapacidad (CUD)</option><option>Desarrollo Social</option><option>Agentes Municipales</option></select></label>
+<label class="f">Cupo mensual de viajes<input class="in" value="12 viajes/mes"></label>
+<button type="button" class="btn">Asignar Voucher</button></div></div>
+<div class="card" style="flex:1;padding:0;overflow:hidden"><div style="padding:14px 16px 4px"><h3>Beneficiarios y auditoría</h3></div><table><thead><tr><th>Vecino y DNI</th><th>Área / Programa</th><th>Viajes usados vs. disponibles</th><th>Último destino habitual</th><th>Estado</th><th>Auditoría</th></tr></thead><tbody><tr><td><b>Elena Gómez</b><div class="sub">DNI 28.•••.502</div></td><td>Salud · Traslados</td><td style="width:230px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:110px;height:12px;border-radius:6px;background:#E3EAEC"><div style="width:66%;height:12px;border-radius:6px;background:#0F6B72"></div></div><b style="font-size:14px;color:#0A3A3C;white-space:nowrap">8 / 12</b></div></td><td>Hospital Mar de Ajó</td><td><span class="pl g">Activo</span></td><td><button type="button" class="bo" style="height:38px;font-size:14px">Ver historial de viajes</button></td></tr><tr><td><b>Raúl Funes</b><div class="sub">DNI 31.•••.917</div></td><td>Discapacidad · CUD</td><td style="width:230px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:110px;height:12px;border-radius:6px;background:#E3EAEC"><div style="width:100%;height:12px;border-radius:6px;background:#A31F1F"></div></div><b style="font-size:14px;color:#0A3A3C;white-space:nowrap">12 / 12</b></div></td><td>Santa Teresita (centro)</td><td><span class="pl r">Cupo agotado</span></td><td><button type="button" class="bo" style="height:38px;font-size:14px">Ver historial de viajes</button></td></tr><tr><td><b>Beatriz Luna</b><div class="sub">DNI 24.•••.366</div></td><td>Desarrollo Social</td><td style="width:230px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:110px;height:12px;border-radius:6px;background:#E3EAEC"><div style="width:30%;height:12px;border-radius:6px;background:#0F6B72"></div></div><b style="font-size:14px;color:#0A3A3C;white-space:nowrap">3 / 10</b></div></td><td>Centro de Salud San Bernardo</td><td><span class="pl g">Activo</span></td><td><button type="button" class="bo" style="height:38px;font-size:14px">Ver historial de viajes</button></td></tr><tr><td><b>Julio Cabrera</b><div class="sub">DNI 27.•••.230</div></td><td>Agente Municipal</td><td style="width:230px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:110px;height:12px;border-radius:6px;background:#E3EAEC"><div style="width:100%;height:12px;border-radius:6px;background:#A31F1F"></div></div><b style="font-size:14px;color:#0A3A3C;white-space:nowrap">22 / 22</b></div></td><td>Delegación Municipal San Bernardo</td><td><span class="pl r">Cupo agotado</span></td><td><button type="button" class="bo" style="height:38px;font-size:14px">Ver historial de viajes</button></td></tr><tr><td><b>Mateo Ríos</b><div class="sub">DNI 45.•••.081</div></td><td>Discapacidad · CUD</td><td style="width:230px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:110px;height:12px;border-radius:6px;background:#E3EAEC"><div style="width:75%;height:12px;border-radius:6px;background:#0F6B72"></div></div><b style="font-size:14px;color:#0A3A3C;white-space:nowrap">15 / 20</b></div></td><td>Mar del Tuyú (centro)</td><td><span class="pl g">Activo</span></td><td><button type="button" class="bo" style="height:38px;font-size:14px">Ver historial de viajes</button></td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</x-dc>
+</body>
+</html>

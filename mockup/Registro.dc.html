@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>LaCostaViaja – Registro</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.hero{background:url(./assets/787bb7fb2ce5ad01de42f60c4eab0825.png) center/cover no-repeat}
+a{color:#0F6B72}a:hover{color:#0A3A3C}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #DDF1F1; font-family: 'Inter', system-ui, sans-serif; overflow: hidden">
+<div class="hero" style="height: 150px; box-sizing: border-box; display: flex; align-items: center; justify-content: center">
+<div style="background: rgba(255,255,255,0.6); border-radius: 20px; padding: 12px 24px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px">
+<img src="./assets/33dc597327ae3be2c21531c4ae92566f.png" alt="La Costa – Estamos cerca" style="height: 84px; width: auto; display: block">
+<span style="font-size: 15px; font-weight: 700; letter-spacing: 0.04em; color: #0A3A3C">LaCostaViaja</span>
+</div>
+</div>
+<div style="flex: 1; box-sizing: border-box; background: #FFFFFF; border-radius: 28px 28px 0 0; margin-top: -20px; padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #34454D">Paso 1 de 3</span>
+<h2 style="margin: 0; font-size: 24px; font-weight: 700; color: #0A3A3C">Creá tu cuenta</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.4; color: #34454D">Sin contraseñas: te mandamos un código por SMS para entrar.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="nombre" style="font-size: 14px; font-weight: 600; color: #34454D">Nombre completo</label>
+<div style="display: flex; align-items: center; gap: 10px; height: 52px; box-sizing: border-box; padding: 0 14px; border: 2px solid #4F5F67; border-radius: 12px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+<input id="nombre" type="text" placeholder="Nombre y apellido" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 16px; color: #0B2E3A; background: transparent">
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="tel" style="font-size: 14px; font-weight: 600; color: #34454D">Teléfono</label>
+<div style="display: flex; align-items: center; gap: 10px; height: 52px; box-sizing: border-box; padding: 0 14px; border: 2px solid #4F5F67; border-radius: 12px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"></rect><path d="M11 18h2"></path></svg>
+<span style="font-size: 16px; font-weight: 600; color: #34454D">+54</span>
+<input id="tel" type="tel" placeholder="11 2345 6789" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 16px; color: #0B2E3A; background: transparent">
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="zona" style="font-size: 14px; font-weight: 600; color: #34454D">Localidad habitual (opcional)</label>
+<select id="zona" style="height: 52px; box-sizing: border-box; padding: 0 10px; border: 2px solid #4F5F67; border-radius: 12px; font-family: inherit; font-size: 16px; color: #0B2E3A; background: #FFFFFF">
+<option>Elegí dónde vas a estar</option>
+<option>San Clemente del Tuyú</option>
+<option>Las Toninas</option>
+<option>Santa Teresita</option>
+<option>Mar del Tuyú</option>
+<option>Costa del Este</option>
+<option>Aguas Verdes</option>
+<option>La Lucila del Mar</option>
+<option>San Bernardo</option>
+<option>Mar de Ajó</option>
+<option>Nueva Atlantis</option>
+</select>
+<span style="font-size: 14px; color: #34454D">Nos ayuda a ubicarte más rápido si el GPS tarda.</span>
+</div>
+<label style="display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-size: 14px; line-height: 1.45; color: #34454D">
+<input type="checkbox" style="width: 22px; height: 22px; margin: 0; flex: none; accent-color: #0F6B72">
+<span>Acepto los <a href="#" style="font-weight: 600">términos y condiciones</a> y la <a href="#" style="font-weight: 600">política de privacidad</a>, y autorizo el tratamiento de mis datos personales para la seguridad de los viajes y el cumplimiento de la normativa municipal.</span>
+</label>
+<button type="button" style="height: 56px; border: 0; border-radius: 14px; background: #0F6B72; color: #FFFFFF; font-family: inherit; font-size: 17px; font-weight: 600; cursor: pointer">Recibir código por SMS</button>
+<div style="flex: 1"></div>
+<p style="margin: 0; text-align: center; font-size: 15px; color: #34454D">¿Ya tenés cuenta? <a href="#" style="font-weight: 600">Iniciá sesión</a></p>
+</div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,215 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Inicio de sesión"
+    },
+    {
+      "file": "Registro.dc.html",
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Registro – paso 1"
+    },
+    {
+      "file": "Codigo.dc.html",
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Registro – código SMS"
+    },
+    {
+      "file": "Verificacion.dc.html",
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Registro – verificación de identidad"
+    },
+    {
+      "file": "Inicio.dc.html",
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Pedido de viaje"
+    },
+    {
+      "file": "Confirmacion.dc.html",
+      "x": 2350,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Confirmación y tarifa"
+    },
+    {
+      "file": "Viaje.dc.html",
+      "x": 2820,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Viaje en curso"
+    },
+    {
+      "file": "Fin.dc.html",
+      "x": 3290,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Viaje finalizado"
+    },
+    {
+      "file": "Panel1.dc.html",
+      "x": 0,
+      "y": 1000,
+      "w": 1440,
+      "h": 900,
+      "title": "Panel – Monitoreo y COM"
+    },
+    {
+      "file": "Panel2.dc.html",
+      "x": 1520,
+      "y": 1000,
+      "w": 1440,
+      "h": 900,
+      "title": "Panel – Flota y Habilitaciones"
+    },
+    {
+      "file": "Panel3.dc.html",
+      "x": 0,
+      "y": 2000,
+      "w": 1440,
+      "h": 900,
+      "title": "Panel – Cuadro Tarifario"
+    },
+    {
+      "file": "Panel4.dc.html",
+      "x": 1520,
+      "y": 2000,
+      "w": 1440,
+      "h": 900,
+      "title": "Panel – Estadísticas y Turismo"
+    },
+    {
+      "file": "Panel5.dc.html",
+      "x": 0,
+      "y": 3000,
+      "w": 1440,
+      "h": 900,
+      "title": "Panel – Vouchers y Beneficios"
+    },
+    {
+      "file": "Portal.dc.html",
+      "x": 1520,
+      "y": 3000,
+      "w": 1440,
+      "h": 900,
+      "title": "Portal Aliados – Hotel / Balneario"
+    },
+    {
+      "file": "PortalA.dc.html",
+      "x": 3040,
+      "y": 3000,
+      "w": 1440,
+      "h": 900,
+      "title": "Portal Aliados – Agencia de Remises"
+    },
+    {
+      "file": "Chofer1.dc.html",
+      "x": 0,
+      "y": 4000,
+      "w": 390,
+      "h": 844,
+      "title": "Chofer – Turno y zona"
+    },
+    {
+      "file": "Chofer2.dc.html",
+      "x": 470,
+      "y": 4000,
+      "w": 390,
+      "h": 844,
+      "title": "Chofer – Solicitud entrante"
+    },
+    {
+      "file": "Chofer3.dc.html",
+      "x": 940,
+      "y": 4000,
+      "w": 390,
+      "h": 844,
+      "title": "Chofer – Viaje en curso"
+    },
+    {
+      "file": "Chofer4.dc.html",
+      "x": 1410,
+      "y": 4000,
+      "w": 390,
+      "h": 844,
+      "title": "Chofer – Resumen y documentación"
+    },
+    {
+      "file": "Familiar.dc.html",
+      "x": 0,
+      "y": 5000,
+      "w": 390,
+      "h": 844,
+      "title": "Pasajero – Pedir para un familiar"
+    },
+    {
+      "file": "Turista.dc.html",
+      "x": 470,
+      "y": 5000,
+      "w": 390,
+      "h": 844,
+      "title": "Turista – Acceso rápido por QR"
+    },
+    {
+      "file": "Offline.dc.html",
+      "x": 940,
+      "y": 5000,
+      "w": 390,
+      "h": 844,
+      "title": "Chofer – Modo sin señal"
+    },
+    {
+      "file": "Cobro.dc.html",
+      "x": 1410,
+      "y": 5000,
+      "w": 390,
+      "h": 844,
+      "title": "Cobro – Mercado Pago / QR"
+    },
+    {
+      "file": "Voucher.dc.html",
+      "x": 1880,
+      "y": 5000,
+      "w": 390,
+      "h": 844,
+      "title": "Pago – Voucher Municipal"
+    },
+    {
+      "file": "Kit.dc.html",
+      "x": 2350,
+      "y": 5000,
+      "w": 390,
+      "h": 844,
+      "title": "Kit identificatorio y QR del móvil"
+    },
+    {
+      "file": "PanelCOM.dc.html",
+      "x": 3040,
+      "y": 1000,
+      "w": 1440,
+      "h": 900,
+      "title": "Panel – COM alerta en atención y viaje auditado"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

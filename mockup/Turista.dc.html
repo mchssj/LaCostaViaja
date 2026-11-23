@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>LaCostaViaja – Acceso rápido por QR</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.ph{width:390px;height:844px;box-sizing:border-box;display:flex;flex-direction:column;background:#fff;font-family:'Inter',system-ui,sans-serif;color:#34454D;overflow:hidden;position:relative}
+.sh{flex:1;box-sizing:border-box;margin-top:-24px;position:relative;background:#fff;border-radius:28px 28px 0 0;box-shadow:0 -6px 20px rgba(10,58,60,.2);padding:10px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.hd{width:40px;height:4px;border-radius:2px;background:#4F5F67;align-self:center}
+.bt{height:60px;border:0;border-radius:14px;background:#0F6B72;color:#fff;font:700 18px Inter,sans-serif;cursor:pointer}
+.bo{min-height:52px;border:2px solid #0F6B72;border-radius:14px;background:#fff;color:#0F6B72;font:700 16px Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center}
+.pl{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:2px 12px;border-radius:14px;font-size:14px;font-weight:700}
+.g{background:#E3F4E8;color:#1B6B3A}.y{background:#FFF1CC;color:#7A5200}.t{background:#E6F4F5;color:#0F6B72}
+.sub{font-size:13px;color:#34454D}.dk{color:#0A3A3C}
+.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:#34454D}
+.in{height:52px;box-sizing:border-box;border:2px solid #4F5F67;border-radius:12px;padding:0 14px;font:600 16px Inter,sans-serif;color:#0A3A3C;background:#fff;width:100%}
+.ch{height:40px;box-sizing:border-box;padding:0 14px;border:1.5px solid #0F6B72;border-radius:20px;background:#fff;font:600 14px Inter,sans-serif;color:#0A3A3C;cursor:pointer;display:flex;align-items:center;gap:6px}
+.ch.on{background:#0F6B72;color:#fff}
+h2{margin:0;font-size:22px;line-height:1.25;color:#0A3A3C}
+</style>
+</helmet>
+<div class="ph">
+<div style="flex:none;height:64px;box-sizing:border-box;padding:0 16px;display:flex;align-items:center;gap:10px;background:#fff;border-bottom:2px solid #C9D3D8"><img src="./assets/33dc597327ae3be2c21531c4ae92566f.png" alt="La Costa" style="height:40px;width:auto"><div style="display:flex;flex-direction:column;line-height:1.25"><b class="dk" style="font-size:15px">LaCostaViaja</b><span class="sub" style="font-weight:600">Pedido Rápido por QR</span></div></div>
+<div style="flex:1;box-sizing:border-box;padding:14px 20px 20px;display:flex;flex-direction:column;gap:12px">
+<div class="pl g" style="align-self:flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1B6B3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Punto verificado: Hotel Costa Azul</div>
+<label class="f">Origen (no editable)<div style="display:flex;align-items:center;gap:10px;min-height:52px;box-sizing:border-box;padding:6px 14px;border:2px solid #C9D3D8;border-radius:12px;background:#F1F9F9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg><b class="dk" style="font-size:15px;line-height:1.3">Hotel Costa Azul · Av. Costanera 1820, San Bernardo</b></div></label>
+<div style="display:flex;flex-direction:column;gap:8px"><label class="f">Destino<input class="in" type="text" placeholder="¿A dónde vas?"></label><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" aria-pressed="false" class="ch">Peatonal / Centro</button><button type="button" aria-pressed="false" class="ch">Terminal de Ómnibus</button><button type="button" aria-pressed="false" class="ch">Playa / Balneario</button><button type="button" aria-pressed="false" class="ch">Otra localidad</button></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;padding:10px 14px;border:2px solid #0F6B72;border-radius:14px;background:#E6F4F5"><div style="display:flex;flex-direction:column"><span class="sub" style="font-weight:600">Tarifa regulada estimada</span><span class="dk" style="font-size:14px">Viaje urbano · 12 min</span></div><b class="dk" style="font-size:30px;line-height:1.1">$4.200</b></div>
+<label class="f">Tu celular (+54 9 ...)<input class="in" type="tel" placeholder="+54 9 …"><span class="sub" style="font-weight:500">Te enviamos un código por SMS para validar el pedido.</span></label>
+<div style="display:flex;gap:8px"><button type="button" aria-pressed="true" class="ch on" style="flex:1;height:48px;justify-content:center;border-radius:12px">Efectivo</button><button type="button" aria-pressed="false" class="ch" style="flex:1;height:48px;justify-content:center;border-radius:12px;border-width:2px;border-color:#4F5F67">Mercado Pago / QR</button></div>
+<div style="flex:1"></div>
+<button type="button" class="bt">Pedir móvil habilitado</button><span class="sub" style="text-align:center;line-height:1.4">La confirmación y el seguimiento te llegan al instante, sin descargar la app.</span></div>
+</div>
+</x-dc>
+</body>
+</html>

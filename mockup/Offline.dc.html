@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>LaCostaViaja – Chofer modo sin señal</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.ph{width:390px;height:844px;box-sizing:border-box;display:flex;flex-direction:column;background:#fff;font-family:'Inter',system-ui,sans-serif;color:#34454D;overflow:hidden;position:relative}
+.sh{flex:1;box-sizing:border-box;margin-top:-24px;position:relative;background:#fff;border-radius:28px 28px 0 0;box-shadow:0 -6px 20px rgba(10,58,60,.2);padding:10px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.hd{width:40px;height:4px;border-radius:2px;background:#4F5F67;align-self:center}
+.bt{height:60px;border:0;border-radius:14px;background:#0F6B72;color:#fff;font:700 18px Inter,sans-serif;cursor:pointer}
+.bo{min-height:52px;border:2px solid #0F6B72;border-radius:14px;background:#fff;color:#0F6B72;font:700 16px Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center}
+.pl{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:2px 12px;border-radius:14px;font-size:14px;font-weight:700}
+.g{background:#E3F4E8;color:#1B6B3A}.y{background:#FFF1CC;color:#7A5200}.t{background:#E6F4F5;color:#0F6B72}
+.sub{font-size:13px;color:#34454D}.dk{color:#0A3A3C}
+.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:#34454D}
+.in{height:52px;box-sizing:border-box;border:2px solid #4F5F67;border-radius:12px;padding:0 14px;font:600 16px Inter,sans-serif;color:#0A3A3C;background:#fff;width:100%}
+.ch{height:40px;box-sizing:border-box;padding:0 14px;border:1.5px solid #0F6B72;border-radius:20px;background:#fff;font:600 14px Inter,sans-serif;color:#0A3A3C;cursor:pointer;display:flex;align-items:center;gap:6px}
+.ch.on{background:#0F6B72;color:#fff}
+h2{margin:0;font-size:22px;line-height:1.25;color:#0A3A3C}
+</style>
+</helmet>
+<div class="ph">
+<div style="flex:none;box-sizing:border-box;padding:16px 20px 12px;background:#FFF1CC;border-bottom:2px solid #7A5200;display:flex;gap:12px;align-items:flex-start"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7A5200" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M2 9a15 15 0 0 1 20 0M5 12.500a10 10 0 0 1 14 0M8.500 16a5 5 0 0 1 7 0M12 20h.01M3 3l18 18"></path></svg><div style="display:flex;flex-direction:column;gap:2px;color:#5A3B00"><b style="font-size:16px">Sin conexión a internet · Modo Offline Activo</b><span style="font-size:13px;line-height:1.4">El viaje y la tarifa cerrada ($18.500) están resguardados localmente. Se sincronizarán al recuperar señal.</span></div></div>
+<div style="position:relative;height:280px;flex:none"><svg width="390" height="280" viewBox="0 0 390 280" role="img" aria-label="Última ruta guardada en caché hacia Av. Chiozza 2450" style="display:block"><rect width="390" height="280" fill="#EEF2EC"></rect><path d="M0 0H78C66 70 96 154 60 280H0Z" fill="#BFE3EC"></path><path d="M78 0C66 70 96 154 60 280L86 280C122 154 94 70 106 0Z" fill="#F2E6C4"></path><g fill="none" stroke="#D3DCD6" stroke-width="18" stroke-linecap="round"><path d="M150 0C138 84 168 182 132 280"></path><path d="M236 0C224 84 254 182 218 280"></path><path d="M322 0C310 84 340 182 304 280"></path><path d="M104 56H390"></path><path d="M104 140H390"></path><path d="M104 224H390"></path></g><g fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round"><path d="M150 0C138 84 168 182 132 280"></path><path d="M236 0C224 84 254 182 218 280"></path><path d="M322 0C310 84 340 182 304 280"></path><path d="M104 56H390"></path><path d="M104 140H390"></path><path d="M104 224H390"></path></g><path d="M236 230V140H322V50" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></path><path d="M236 230V140H322V50" fill="none" stroke="#0F6B72" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path><rect x="311" y="39" width="22" height="22" rx="5" fill="#0A3A3C" stroke="#fff" stroke-width="3"></rect><g transform="translate(236 232)"><circle r="18" fill="#fff" stroke="#0F6B72" stroke-width="3"></circle><rect x="-5" y="-10" width="10" height="20" rx="4" fill="#0F6B72"></rect></g></svg><span class="pl" style="position:absolute;left:14px;bottom:36px;background:#fff;border:2px solid #C9D3D8;color:#0A3A3C;font-size:13px">Mapa en caché · última ruta</span></div>
+<div class="sh" style="gap:10px"><div class="hd"></div>
+<div class="sub" style="text-align:center;font-weight:600">Marcelo Quiroga · AF 412 KD · Habilitación N° 0482</div>
+<div style="box-sizing:border-box;padding:12px 14px;border:3px solid #0F6B72;border-radius:16px;background:#E6F4F5;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center"><span style="font-size:14px;font-weight:700;color:#0A3A3C">PIN de inicio/cierre de viaje</span><span style="font-size:48px;line-height:1.1;font-weight:700;letter-spacing:.18em;color:#0F6B72;padding-left:.18em">4829</span><span style="font-size:13px;line-height:1.4;color:#0A3A3C">Pedile este código de 4 dígitos al pasajero si no hay datos móviles para validar el traslado.</span></div>
+<div style="display:flex;flex-direction:column;gap:4px"><button type="button" class="bo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F6B72" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="3" y="6" width="18" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.500"></circle></svg>Tomé viaje en parada / calle (Marcar ocupado)</button><span class="sub" style="line-height:1.4;text-align:center">Te pausa en la cola virtual sin penalización mientras realizás un viaje de bandera.</span></div>
+<div style="flex:1"></div>
+<button type="button" class="bt">Finalizar viaje con PIN</button></div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>LaCostaViaja – Cobro Mercado Pago / QR</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.ph{width:390px;height:844px;box-sizing:border-box;display:flex;flex-direction:column;background:#fff;font-family:'Inter',system-ui,sans-serif;color:#34454D;overflow:hidden;position:relative}
+.bt{height:60px;border:0;border-radius:14px;background:#0F6B72;color:#fff;font:700 18px Inter,sans-serif;cursor:pointer}
+.bo{min-height:52px;border:2px solid #0F6B72;border-radius:14px;background:#fff;color:#0F6B72;font:700 16px Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.pl{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:3px 12px;border-radius:14px;font-size:14px;font-weight:700;line-height:1.25}
+.g{background:#E3F4E8;color:#1B6B3A}.y{background:#FFF1CC;color:#7A5200}
+.sub{font-size:13px;color:#34454D}.dk{color:#0A3A3C}
+.cd{box-sizing:border-box;border:2px solid #C9D3D8;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+h2{margin:0;font-size:22px;line-height:1.25;color:#0A3A3C}
+</style>
+</helmet>
+<div class="ph">
+<div style="flex:none;box-sizing:border-box;padding:20px 20px 12px;display:flex;flex-direction:column;gap:8px"><h2>Cobro digital · Mercado Pago / QR</h2><span class="pl y" style="align-self:flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5200" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Esperando confirmación de pago</span></div>
+<div style="flex:1;box-sizing:border-box;padding:0 20px 20px;display:flex;flex-direction:column;gap:12px">
+<div class="cd" style="align-items:center;text-align:center;gap:8px">
+<div style="display:flex;flex-direction:column;gap:2px"><b class="dk" style="font-size:15px">Viaje #LCV-2026-08419 · Urbano</b><span class="sub">Marcelo Quiroga · Patente AF 412 KD · Hab. N° 0482</span></div>
+<div style="display:flex;flex-direction:column;align-items:center"><span class="sub" style="display:flex;align-items:center;gap:4px;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Monto bloqueado</span><span style="font-size:44px;line-height:1.1;font-weight:700;color:#0A3A3C">$4.200</span></div>
+<div style="position:relative;padding:8px;border:2px solid #4F5F67;border-radius:12px;background:#fff"><svg width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="Código QR de ejemplo para pagar $4.200" style="display:block"><rect width="200" height="200" fill="#fff"></rect><path d="M112 0h8v8h-8zM120 0h8v8h-8zM72 8h8v8h-8zM80 8h8v8h-8zM88 8h8v8h-8zM112 8h8v8h-8zM120 8h8v8h-8zM128 8h8v8h-8zM72 16h8v8h-8zM88 16h8v8h-8zM104 16h8v8h-8zM112 16h8v8h-8zM128 16h8v8h-8zM136 16h8v8h-8zM80 24h8v8h-8zM112 24h8v8h-8zM72 32h8v8h-8zM80 32h8v8h-8zM88 32h8v8h-8zM96 32h8v8h-8zM104 32h8v8h-8zM112 32h8v8h-8zM128 32h8v8h-8zM64 40h8v8h-8zM72 40h8v8h-8zM88 40h8v8h-8zM96 40h8v8h-8zM104 40h8v8h-8zM120 40h8v8h-8zM136 40h8v8h-8zM80 48h8v8h-8zM96 48h8v8h-8zM112 48h8v8h-8zM120 48h8v8h-8zM128 48h8v8h-8zM64 56h8v8h-8zM96 56h8v8h-8zM104 56h8v8h-8zM128 56h8v8h-8zM16 64h8v8h-8zM32 64h8v8h-8zM40 64h8v8h-8zM64 64h8v8h-8zM88 64h8v8h-8zM96 64h8v8h-8zM104 64h8v8h-8zM112 64h8v8h-8zM120 64h8v8h-8zM144 64h8v8h-8zM152 64h8v8h-8zM176 64h8v8h-8zM184 64h8v8h-8zM8 72h8v8h-8zM16 72h8v8h-8zM24 72h8v8h-8zM40 72h8v8h-8zM48 72h8v8h-8zM64 72h8v8h-8zM160 72h8v8h-8zM168 72h8v8h-8zM176 72h8v8h-8zM192 72h8v8h-8zM0 80h8v8h-8zM32 80h8v8h-8zM40 80h8v8h-8zM56 80h8v8h-8zM64 80h8v8h-8zM128 80h8v8h-8zM136 80h8v8h-8zM144 80h8v8h-8zM176 80h8v8h-8zM184 80h8v8h-8zM192 80h8v8h-8zM0 88h8v8h-8zM24 88h8v8h-8zM128 88h8v8h-8zM144 88h8v8h-8zM152 88h8v8h-8zM176 88h8v8h-8zM8 96h8v8h-8zM24 96h8v8h-8zM40 96h8v8h-8zM128 96h8v8h-8zM160 96h8v8h-8zM24 104h8v8h-8zM48 104h8v8h-8zM136 104h8v8h-8zM168 104h8v8h-8zM8 112h8v8h-8zM16 112h8v8h-8zM24 112h8v8h-8zM40 112h8v8h-8zM64 112h8v8h-8zM128 112h8v8h-8zM136 112h8v8h-8zM144 112h8v8h-8zM152 112h8v8h-8zM160 112h8v8h-8zM168 112h8v8h-8zM176 112h8v8h-8zM184 112h8v8h-8zM192 112h8v8h-8zM0 120h8v8h-8zM24 120h8v8h-8zM40 120h8v8h-8zM48 120h8v8h-8zM56 120h8v8h-8zM64 120h8v8h-8zM128 120h8v8h-8zM144 120h8v8h-8zM152 120h8v8h-8zM168 120h8v8h-8zM184 120h8v8h-8zM16 128h8v8h-8zM40 128h8v8h-8zM48 128h8v8h-8zM96 128h8v8h-8zM112 128h8v8h-8zM120 128h8v8h-8zM144 128h8v8h-8zM168 128h8v8h-8zM176 128h8v8h-8zM184 128h8v8h-8zM192 128h8v8h-8zM8 136h8v8h-8zM40 136h8v8h-8zM56 136h8v8h-8zM64 136h8v8h-8zM72 136h8v8h-8zM88 136h8v8h-8zM96 136h8v8h-8zM104 136h8v8h-8zM112 136h8v8h-8zM128 136h8v8h-8zM136 136h8v8h-8zM160 136h8v8h-8zM176 136h8v8h-8zM64 144h8v8h-8zM72 144h8v8h-8zM80 144h8v8h-8zM96 144h8v8h-8zM112 144h8v8h-8zM144 144h8v8h-8zM160 144h8v8h-8zM176 144h8v8h-8zM184 144h8v8h-8zM64 152h8v8h-8zM72 152h8v8h-8zM96 152h8v8h-8zM104 152h8v8h-8zM112 152h8v8h-8zM144 152h8v8h-8zM160 152h8v8h-8zM192 152h8v8h-8zM72 160h8v8h-8zM80 160h8v8h-8zM96 160h8v8h-8zM104 160h8v8h-8zM120 160h8v8h-8zM144 160h8v8h-8zM152 160h8v8h-8zM176 160h8v8h-8zM184 160h8v8h-8zM64 168h8v8h-8zM72 168h8v8h-8zM80 168h8v8h-8zM104 168h8v8h-8zM112 168h8v8h-8zM144 168h8v8h-8zM184 168h8v8h-8zM64 176h8v8h-8zM96 176h8v8h-8zM104 176h8v8h-8zM120 176h8v8h-8zM136 176h8v8h-8zM144 176h8v8h-8zM160 176h8v8h-8zM168 176h8v8h-8zM176 176h8v8h-8zM184 176h8v8h-8zM192 176h8v8h-8zM88 184h8v8h-8zM96 184h8v8h-8zM104 184h8v8h-8zM120 184h8v8h-8zM136 184h8v8h-8zM144 184h8v8h-8zM160 184h8v8h-8zM72 192h8v8h-8zM88 192h8v8h-8zM112 192h8v8h-8zM120 192h8v8h-8zM128 192h8v8h-8zM144 192h8v8h-8zM168 192h8v8h-8zM184 192h8v8h-8zM192 192h8v8h-8z" fill="#0A3A3C"></path><rect x="0" y="0" width="56" height="56" fill="#0A3A3C"></rect><rect x="8" y="8" width="40" height="40" fill="#fff"></rect><rect x="16" y="16" width="24" height="24" fill="#0A3A3C"></rect><rect x="144" y="0" width="56" height="56" fill="#0A3A3C"></rect><rect x="152" y="8" width="40" height="40" fill="#fff"></rect><rect x="160" y="16" width="24" height="24" fill="#0A3A3C"></rect><rect x="0" y="144" width="56" height="56" fill="#0A3A3C"></rect><rect x="8" y="152" width="40" height="40" fill="#fff"></rect><rect x="16" y="160" width="24" height="24" fill="#0A3A3C"></rect></svg><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:36px;border-radius:10px;background:#fff;border:2px solid #0F6B72;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0F6B72">MP</div></div>
+<span class="sub" style="line-height:1.4">Escaneá desde Mercado Pago, Cuenta DNI o cualquier billetera virtual</span>
+<button type="button" class="bo" style="align-self:stretch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F6B72" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>Copiar alias / link de pago</button></div>
+<div style="display:flex;gap:10px;align-items:flex-start;box-sizing:border-box;padding:10px 12px;border-radius:12px;background:#E6F4F5;font-size:13px;line-height:1.4;color:#0A3A3C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F6B72" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg><span>El pago ingresa directo a la cuenta del chofer/agencia habilitada, sin retenciones intermediarias.</span></div>
+<div style="flex:1"></div>
+<button type="button" class="bt">Confirmar pago recibido</button></div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>LaCostaViaja – Panel Municipal COM – Alerta en atención</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.app{width:1440px;height:900px;display:flex;background:#F4F8F8;font-family:'Inter',system-ui,sans-serif;color:#34454D;overflow:hidden}
+.sb{width:250px;flex:none;background:#fff;border-right:2px solid #C9D3D8;display:flex;flex-direction:column;padding:20px 14px;box-sizing:border-box;gap:6px}
+.nv{display:block;padding:13px 12px;border-radius:10px;font-size:15px;font-weight:600;color:#0A3A3C;text-decoration:none;border-left:4px solid transparent}
+.nv.on{background:#E6F4F5;border-left-color:#0F6B72;color:#0F6B72;font-weight:700}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:64px;flex:none;background:#fff;border-bottom:2px solid #C9D3D8;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.ct{flex:1;padding:20px 24px;display:flex;flex-direction:column;gap:16px;min-height:0}
+.card{background:#fff;border:2px solid #C9D3D8;border-radius:14px;padding:16px;box-sizing:border-box}
+h1{margin:0;font-size:22px;color:#0A3A3C}h3{margin:0;font-size:16px;color:#0A3A3C}
+.btn{height:44px;border:0;border-radius:10px;background:#0F6B72;color:#fff;font:700 15px Inter,sans-serif;padding:0 18px;cursor:pointer}
+.bo{height:44px;border:2px solid #0F6B72;border-radius:10px;background:#fff;color:#0F6B72;font:700 15px Inter,sans-serif;padding:0 16px;cursor:pointer}
+.br{height:44px;border:2px solid #A31F1F;border-radius:10px;background:#fff;color:#A31F1F;font:700 14px Inter,sans-serif;padding:0 12px;cursor:pointer}
+.pl{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;font-size:13px;font-weight:700;white-space:nowrap}
+.g{background:#E3F4E8;color:#1B6B3A}.y{background:#FFF1CC;color:#7A5200}.r{background:#FDECEA;color:#A31F1F}.t{background:#E6F4F5;color:#0F6B72}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:13px;color:#34454D;padding:10px 12px;border-bottom:2px solid #C9D3D8}td{padding:9px 12px;border-bottom:1.5px solid #E3EAEC;color:#0A3A3C;vertical-align:middle}
+.in{height:44px;border:2px solid #4F5F67;border-radius:10px;padding:0 12px;font:600 16px Inter,sans-serif;color:#0A3A3C;box-sizing:border-box;background:#fff;width:100%}
+.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:#34454D}
+.sub{font-size:13px;color:#34454D}.kp{font-size:30px;font-weight:700;color:#0A3A3C;line-height:1.1}
+@keyframes pu{0%{r:12;opacity:.7}100%{r:34;opacity:0}}.pulse{animation:pu 1.4s infinite}
+</style>
+</helmet>
+<div class="app">
+<nav class="sb" aria-label="Vistas del panel">
+<div style="display:flex;align-items:center;gap:10px;padding:0 4px 18px;border-bottom:2px solid #C9D3D8;margin-bottom:10px"><img src="./assets/33dc597327ae3be2c21531c4ae92566f.png" alt="La Costa" style="height:52px;width:auto"><div style="display:flex;flex-direction:column;line-height:1.25"><b style="font-size:15px;color:#0A3A3C">LaCostaViaja</b><span class="sub" style="font-weight:600">Gestión Municipal</span></div></div>
+<a href="#" class="nv on">1. Monitoreo y COM</a><a href="#" class="nv">2. Flota y Habilitaciones</a><a href="#" class="nv">3. Cuadro Tarifario</a><a href="#" class="nv">4. Estadísticas y Turismo</a><a href="#" class="nv">5. Vouchers y Beneficios</a>
+<div style="flex:1"></div>
+<div style="display:flex;align-items:center;gap:10px;padding:14px 4px 0;border-top:2px solid #C9D3D8"><div style="width:40px;height:40px;border-radius:20px;background:#0F6B72;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">DT</div><div style="display:flex;flex-direction:column;line-height:1.3"><b style="font-size:14px;color:#0A3A3C">Dirección de Transporte</b><span class="sub">Partido de La Costa</span></div></div>
+</nav>
+<div class="main">
+<div class="top">
+<label style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#34454D">Zona
+<select aria-label="Filtro por zona" style="height:42px;border:2px solid #4F5F67;border-radius:10px;padding:0 10px;font:600 15px Inter,sans-serif;color:#0A3A3C;background:#fff;min-width:340px"><option>Todo el Partido (14 localidades)</option><option>Zona Sur: Mar de Ajó - San Bernardo</option><option>Zona Centro: Santa Teresita - Mar del Tuyú</option><option>Zona Norte: San Clemente</option></select></label>
+<span class="pl t" style="height:36px;font-size:14px;gap:8px"><span style="width:10px;height:10px;border-radius:5px;background:#0F6B72"></span>Modo activo: Temporada Baja</span>
+</div>
+<div class="ct">
+<div style="display:flex;gap:16px;height:500px;flex:none">
+<div class="card" style="flex:1;padding:0;overflow:hidden;position:relative"><svg width="100%" height="100%" viewBox="0 0 746 496" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa de San Bernardo con la alerta en atención y el móvil policial en camino" style="display:block"><rect width="746" height="496" fill="#EEF2EC"></rect><path d="M0 0H150C132 100 168 230 140 340C124 410 156 460 148 496H0Z" fill="#BFE3EC"></path><path d="M150 0C132 100 168 230 140 340C124 410 156 460 148 496L174 496C182 460 150 410 166 340C194 230 158 100 176 0Z" fill="#F2E6C4"></path><g fill="none" stroke="#D3DCD6" stroke-width="12"><path d="M180 70 H746"></path><path d="M180 170 H746"></path><path d="M180 270 H746"></path><path d="M180 380 H746"></path><path d="M180 450 H746"></path><path d="M260 0V496M400 0V496"></path></g><g fill="none" stroke="#fff" stroke-width="8"><path d="M180 70 H746"></path><path d="M180 170 H746"></path><path d="M180 270 H746"></path><path d="M180 380 H746"></path><path d="M180 450 H746"></path><path d="M260 0V496M400 0V496"></path></g><path d="M560 0C550 120 570 250 550 370C542 430 560 470 556 496" fill="none" stroke="#B9C7C2" stroke-width="22"></path><path d="M560 0C550 120 570 250 550 370C542 430 560 470 556 496" fill="none" stroke="#fff" stroke-width="16"></path><circle cx="230" cy="110" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="340" cy="120" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="470" cy="230" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="610" cy="60" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="620" cy="200" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="450" cy="330" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="360" cy="420" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="640" cy="400" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle><circle cx="280" cy="470" r="6" fill="#0F6B72" stroke="#fff" stroke-width="2.5"></circle>
+<path d="M440 150V270H318" fill="none" stroke="#0A3A3C" stroke-width="5" stroke-dasharray="10 8" stroke-linecap="round" stroke-linejoin="round"></path>
+<rect x="426" y="136" width="28" height="28" rx="8" fill="#0A3A3C" stroke="#fff" stroke-width="3"></rect><g transform="translate(428 138) scale(1)" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></g>
+<circle cx="300" cy="270" r="32" fill="#B3261E" fill-opacity=".18"></circle><circle cx="300" cy="270" r="11" fill="#B3261E" stroke="#fff" stroke-width="3.5"></circle>
+<rect x="186" y="208" width="228" height="32" rx="16" fill="#7A5200"></rect><text x="300" y="229" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#fff">Alerta en atención · AF 412 KD</text>
+<g font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#0A3A3C" stroke="#fff" stroke-width="4" paint-order="stroke"><text x="590" y="100">Mar de Ajó</text><text x="590" y="320">San Bernardo</text><text x="590" y="480" font-size="12" fill="#34454D" font-weight="600">Ruta Provincial 11</text><text x="462" y="148" font-size="12">Móvil policial / Tránsito</text></g></svg>
+<div style="position:absolute;left:14px;bottom:14px;background:#fff;border:2px solid #C9D3D8;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;color:#0A3A3C;display:flex;gap:14px"><span style="color:#A31F1F">● Alerta</span><span>■ Móvil policial / Tránsito</span><span style="color:#0F6B72">● Unidad activa</span></div></div>
+<div class="card" style="width:380px;flex:none;padding:0;overflow:hidden;display:flex;flex-direction:column;border-color:#7A5200">
+<div style="background:#7A5200;color:#fff;padding:12px 16px"><div style="font-size:13px;font-weight:700">ALERTA COM · EN ATENCIÓN</div><div style="font-size:20px;font-weight:700">Móvil despachado</div></div>
+<div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+<div><div class="sub" style="font-weight:600">Pasajero</div><div style="font-size:17px;font-weight:700;color:#0A3A3C">Laura Méndez <span class="pl g" style="margin-left:6px">DNI verificado</span></div><div style="font-size:14px;color:#0A3A3C;margin-top:2px">Tel. +54 9 2257 41-5532</div><div style="font-size:14px;color:#0A3A3C">GPS: Av. Costanera y Querini, San Bernardo</div></div>
+<div style="border-top:1.5px solid #E3EAEC;padding-top:12px"><div class="sub" style="font-weight:600">Chofer y móvil</div><div style="font-size:17px;font-weight:700;color:#0A3A3C">Marcelo Quiroga</div><div style="font-size:14px;color:#0A3A3C;margin-top:2px">Fiat Cronos · Blanco · Patente <b>AF 412 KD</b></div><div style="font-size:14px;color:#0A3A3C">Habilitación Municipal N° 0482 · Vigente</div></div>
+<div style="display:flex;gap:10px;align-items:center;border:1.5px solid #0F6B72;border-radius:12px;background:#E6F4F5;padding:10px 12px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F6B72" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg><div style="display:flex;flex-direction:column;line-height:1.3"><b style="font-size:14px;color:#0A3A3C">Móvil policial y Tránsito despachados</b><span class="sub">Hace 1 min</span></div></div>
+<div style="flex:1"></div>
+<button type="button" class="btn" style="height:48px">Marcar alerta resuelta</button>
+<a href="#detalle" style="min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:700;text-decoration:underline">Ver detalle y comprobante del viaje</a>
+</div></div></div>
+<div id="detalle" class="card" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;padding:14px 16px">
+<div style="display:flex;align-items:center;gap:12px"><h3>Detalle de viaje y comprobante auditado</h3><span class="pl y">Viaje #LCV-2026-08431 · Intervenido por COM</span><span style="flex:1"></span><button type="button" class="bo" style="display:flex;align-items:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F6B72" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"></path></svg>Descargar comprobante (PDF)</button></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div style="border:1.5px solid #E3EAEC;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span class="sub" style="font-weight:600">Trayecto</span><b style="font-size:15px;color:#0A3A3C;line-height:1.3">Terminal Santa Teresita → Av. Chiozza 2450, San Bernardo</b></div><div style="border:1.5px solid #E3EAEC;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span class="sub" style="font-weight:600">Horario</span><b style="font-size:15px;color:#0A3A3C;line-height:1.3">21/11/2026 · inicio 17:52 · llegada estimada 18:20</b></div><div style="border:1.5px solid #E3EAEC;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span class="sub" style="font-weight:600">Distancia y duración</span><b style="font-size:15px;color:#0A3A3C;line-height:1.3">29 km · 28 min</b></div><div style="border:1.5px solid #E3EAEC;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span class="sub" style="font-weight:600">Tarifa regulada</span><b style="font-size:15px;color:#0A3A3C;line-height:1.3">$18.500</b><span class="sub">Interurbano Ruta 11</span></div><div style="border:1.5px solid #E3EAEC;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span class="sub" style="font-weight:600">Medio de pago</span><b style="font-size:15px;color:#0A3A3C;line-height:1.3">Efectivo</b></div><div style="border:1.5px solid #E3EAEC;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px"><span class="sub" style="font-weight:600">Estado de habilitación</span><b style="font-size:15px;color:#0A3A3C;line-height:1.3">Habilitación Municipal N° 0482 · Vigente</b><span class="sub">VTV y Seguro al día</span></div></div>
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="pl t" style="height:32px;gap:6px"><b>17:52</b> Viaje iniciado</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><span class="pl t" style="height:32px;gap:6px"><b>18:17</b> Alerta COM activada</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34454D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><span class="pl t" style="height:32px;gap:6px"><b>18:18</b> Móvil policial y Tránsito despachados</span></div></div>
+</div>
+</div>
+</div>
+</x-dc>
+</body>
+</html>
